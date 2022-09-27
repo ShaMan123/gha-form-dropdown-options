@@ -22,9 +22,9 @@ on:
 
   # use in production
   schedule:
-    # runs on Monday midnight
+    # runs daily at midnight
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '0 0 * * 1'
+    - cron: '0 0 * * *'
 
 jobs:
   update-bug-report:
@@ -32,85 +32,34 @@ jobs:
     name: Update bug report
     steps:
       - uses: actions/checkout@v3
-      - name: Update fabric
-        id: fabric
-        uses: ./
-        with:
-          package: fabric
-          dropdown: fabric
-      - name: Update fabric tags
-        uses: ./
-        with:
-          # needed to fetch tags with the github client
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          dropdown: fabric_tags
-          registry: github
-          package: fabricjs/fabric.js
-      - name: Update lodash
-        id: lodash
-        uses: ./
-        with:
-          package: lodash
-          dropdown: lodash
-          limit_to: 20
-      - name: Update self
-        uses: ./
-        with:
-          # needed to fetch tags with the github client
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          registry: github
-          semver: '>=0.1.21'
-      - name: Update react-native-math-view
-        uses: ./
-        with:
-          # needed to fetch tags with the github client
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          dropdown: math
-          registry: github
-          package: react-native-math-view
-      - name: Update node
-        id: node
-        uses: ./
-        with:
-          dropdown: node_version
-          package: node
-          order: asc
-          limit_to: 15
-      - name: Dry Run Axios
-        id: axios
-        uses: ./
-        with:
-          package: axios
-          limit_to: 10
-          dry_run: true
-      - name: Dry Run pixijs
-        id: pixijs
-        uses: ./
-        with:
-          package: pixijs/pixijs
-          registry: github
-          limit_to: 10
-          dry_run: true
-      - name: Update copy
-        uses: ./
-        with:
-          dropdown: copy
-          tags: ${{ steps.axios.outputs.tags }}
-      # This step demonstrates how to generate tags
-      - name: Mock tags
-        id: mock_tags
+      - name: Get branches
+        id: branches
+        # https://github.com/actions/github-script
         uses: actions/github-script@v6
-        env:
-          NODE_LATEST_VERSION: ${{ steps.node.outputs.latest }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
           script: |
-            return ['1.2.3', '4.5.6', '7.8.9', `node@${process.env.NODE_LATEST_VERSION}`, 'fabric@${{ steps.fabric.outputs.latest }}']
-              .concat(${{ steps.lodash.outputs.tags }}.slice(0, 5).map(tag => `lodash@${tag}`))
-              .concat(${{ steps.pixijs.outputs.tags }}.slice(0, 5).map(tag => `pixijs@${tag}`));
-      - name: Update generated
+            github
+              .getOctokit()
+              .rest.repos.listBranches(github.context.repo)
+              .then((res) => res.data.map((b) => b.name));
+      - name: Update branches
         uses: ./
         with:
-          dropdown: generated
-          tags: ${{ steps.mock_tags.outputs.result }}
+          dropdown: branches
+          options: ${{ steps.branches.result }}
+
+      - name: Get next week
+        id: dates
+        # https://github.com/actions/github-script
+        uses: actions/github-script@v6
+        with:
+          script: |
+            import moment from 'moment';
+            return new array(7).fill(0)
+              .map((_, i) => moment().add(i + 7, 'd').format('YYYY-MM-DD'));
+      - name: Update dates
+        id: update_dates
+        uses: ./
+        with:
+          dropdown: dates
+          options: ${{ steps.dates.result }}

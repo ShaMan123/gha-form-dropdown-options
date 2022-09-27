@@ -9,42 +9,16 @@ inputs:
     description: Github token
     default: ${{ github.token }}
   form:
-    description: 'The location of the yaml form file'
+    description: The location of the yaml form file
     default: '.github/ISSUE_TEMPLATE/bug_report.yml'
     type: string
   dropdown:
-    description: 'The id of the dropdown in the yaml form to populate tags into'
-    default: 'version'
+    description: The id of the dropdown in the yaml form to populate options into
     type: string
-  package:
-    description: 'The name of the published package'
-    default: ${{ github.event.repository.name }}
-    type: string
-  registry:
-    description: 'The name of the registry the package is published at'
-    default: 'npm'
-    type: string
-    options:
-      - npm
-      - github
-  order:
-    description: 'Display order of populated tags (`asc | desc`)'
-    default: 'desc'
-    type: choice
-    options:
-      - desc
-      - asc
-  limit_to:
-    description: 'Limit populated tags'
-    type: number
-  semver:
-    description: 'A semver range query used to filter satisfying tags, see `semver#satisfies`'
-    type: string
-  tags:
-    description: 'A stringified array of tags overriding fetching `package` tags from `registry`, overrides `order`, `limit_to` and dismisses outputs as well'
+  options:
+    description: A stringified array of options
     type: string
   commit_message:
-    default: 'chore(): update bug report version'
     type: string
   dry_run:
     description: When set to `true` will not commit the modified yaml form
@@ -52,12 +26,9 @@ inputs:
     type: boolean
 outputs:
   # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-declaring-outputs-for-composite-actions
-  tags:
-    description: A stringified array of the resulting tags
-    value: ${{ steps.main.outputs.tags }}
-  latest:
-    description: Latest tag of `package` in `registry`
-    value: ${{ steps.main.outputs.latest }}
+  previous_options:
+    description: A stringified array of the previous options
+    value: ${{ steps.main.outputs.prev }}
 runs:
   using: composite
   steps:
@@ -81,12 +52,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
-        INPUT_PACKAGE: ${{ inputs.package }}
-        INPUT_REGISTRY: ${{ inputs.registry }}
-        INPUT_ORDER: ${{ inputs.order }}
-        INPUT_LIMIT_TO: ${{ inputs.limit_to }}
-        INPUT_SEMVER: ${{ inputs.semver }}
-        INPUT_TAGS: ${{ inputs.tags }}
+        INPUT_OPTIONS: ${{ inputs.options }}
         INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
     - name: Commit to ${{ env.job_ref }}
       if: ${{ !fromJSON(inputs.dry_run) }}

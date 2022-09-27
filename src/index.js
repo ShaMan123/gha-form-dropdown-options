@@ -1,6 +1,6 @@
 import { getInput, setFailed, setOutput } from '@actions/core';
-import semver from 'semver';
-import { listTags, writeYAML } from './util';
+import github from '@actions/github';
+import { writeYAML } from './util';
 
 async function run() {
 	try {
@@ -9,47 +9,24 @@ async function run() {
 			trimWhitespace: true,
 			required: true,
 		});
-		const packageName = getInput('package', {
+		const optionsInput = getInput('options', {
 			trimWhitespace: true,
+			required: true,
 		});
-		const registry = getInput('registry', {
-			trimWhitespace: true,
-		});
-		const order = getInput('order', { trimWhitespace: true });
-		const limitTo =
-			Math.max(Number(getInput('limit_to', { trimWhitespace: true })), 0) ||
-			undefined;
-		const semverRange = getInput('semver', {
-			trimWhitespace: true,
-		});
-		let tags;
-		const tagsInput = getInput('tags', { trimWhitespace: true });
-		if (tagsInput) {
-			try {
-				tags = JSON.parse(tagsInput);
-				if (!Array.isArray(tags)) {
-					throw new Error('bad parsing');
-				}
-			} catch (error) {
-				tags = tagsInput
-					.split(',')
-					.map((value) => value.trim())
-					.filter((value) => !!value);
+		let options;
+		try {
+			options = JSON.parse(optionsInput);
+			if (!Array.isArray(options)) {
+				throw new Error('bad parsing');
 			}
-		} else {
-			const list = await listTags(registry, packageName);
-			const latest = list[0];
-			if (order === 'asc') {
-				list.reverse();
-			}
-			tags = list
-				.slice(0, limitTo)
-				.filter((tag) => semver.satisfies(semver.clean(tag), semverRange));
-
-			setOutput('latest', latest);
-			setOutput('tags', tags);
+		} catch (error) {
+			options = optionsInput
+				.split(/,|\n/gm)
+				.map((value) => value.trim())
+				.filter((value) => !!value);
 		}
-		writeYAML(form, dropdownId, tags);
+		const prevOptions = writeYAML(form, dropdownId, options);
+		setOutput('prev', prevOptions);
 	} catch (error) {
 		console.error(error);
 		setFailed(error);
