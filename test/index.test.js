@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
+import fs from 'fs';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,16 +26,16 @@ describe('action', function () {
 		dotenv.config();
 	});
 	this.beforeEach(() => {
-		writeFileSync(test, readFileSync(template));
+		fs.writeFileSync(test, fs.readFileSync(template));
 		assert.equal(
-			readFileSync(test).toString(),
-			readFileSync(template).toString(),
+			fs.readFileSync(test).toString(),
+			fs.readFileSync(template).toString(),
 			'should prepare test',
 		);
 	});
 	this.afterEach(() => {
-		unlinkSync(test);
-		assert.ok(!existsSync(test), 'should cleanup test');
+		fs.unlinkSync(test);
+		assert.ok(!fs.existsSync(test), 'should cleanup test');
 	});
 
 	it('passing options', async function () {
@@ -49,8 +49,8 @@ describe('action', function () {
 		Object.assign(process.env, parseInputs(inputs));
 		await import('../dist/main.cjs');
 		assert.strictEqual(
-			readFileSync(test).toString().replace(/\s/gm, ''),
-			readFileSync(expected).toString().replace(/\s/gm, ''),
+			fs.readFileSync(test).toString().replace(/\s/gm, ''),
+			fs.readFileSync(expected).toString().replace(/\s/gm, ''),
 			'output should match',
 		);
 	});
