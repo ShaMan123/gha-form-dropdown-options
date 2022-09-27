@@ -39,7 +39,7 @@ jobs:
         with:
           script: |
             github
-              .rest.repos.listBranches(github.context.repo)
+              .rest.repos.listBranches(context.repo)
               .then((res) => res.data.map((b) => b.name));
       - name: Get labels
         id: labels
@@ -47,7 +47,7 @@ jobs:
         with:
           script: |
             github
-              .rest.issues.listLabelsForRepo(github.context.repo)
+              .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
       - name: Update branches
         uses: ./
