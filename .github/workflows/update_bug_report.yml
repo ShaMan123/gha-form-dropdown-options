@@ -47,9 +47,11 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            github
+            const res = await github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
+            console.log(res);
+            return res;
       - name: Update branches
         uses: ./
         with:
