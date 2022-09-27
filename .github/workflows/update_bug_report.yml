@@ -33,6 +33,10 @@ jobs:
     name: Update bug report
     steps:
       - uses: actions/checkout@v3
+      # needed for the dates step
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
