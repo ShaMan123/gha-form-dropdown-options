@@ -40,7 +40,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            github
+            return github
               .rest.repos.listBranches(context.repo)
               .then((res) => res.data.map((b) => b.name));
       - name: Get labels
@@ -49,7 +49,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            github
+            return github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
       - name: Update branches
@@ -69,7 +69,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            import moment from 'moment';
+            const moment = require('moment');
             return new array(7).fill(0)
               .map((_, i) => moment().add(i + 7, 'd').format('YYYY-MM-DD'));
       - name: Update dates
