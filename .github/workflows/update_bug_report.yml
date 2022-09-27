@@ -58,6 +58,7 @@ jobs:
           dropdown: branches
           options: ${{ steps.branches.outputs.result }}
           commit_message: 'chore(): update bug report branches'
+          ref: main
       - name: Update labels
         uses: ./
         with:
