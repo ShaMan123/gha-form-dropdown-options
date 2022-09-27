@@ -40,7 +40,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return github
+            github
               .rest.repos.listBranches(context.repo)
               .then((res) => res.data.map((b) => b.name));
       - name: Get labels
@@ -49,20 +49,20 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return github
+            github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
       - name: Update branches
         uses: ./
         with:
           dropdown: branches
-          options: ${{ steps.branches.result }}
+          options: ${{ steps.branches.outputs.result }}
           commit_message: 'chore(): update bug report branches'
       - name: Update labels
         uses: ./
         with:
           dropdown: labels
-          options: ${{ steps.labels.result }}
+          options: ${{ steps.labels.outputs.result }}
           commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
@@ -77,5 +77,5 @@ jobs:
         uses: ./
         with:
           dropdown: dates
-          options: ${{ steps.dates.result }}
+          options: ${{ steps.dates.outputs.result }}
           commit_message: 'chore(): update bug report dates'
