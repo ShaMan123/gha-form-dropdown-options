@@ -32,7 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Update bug report
     steps:
-      - uses: actions/checkout@v3
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
