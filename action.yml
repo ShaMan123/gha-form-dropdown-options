@@ -43,6 +43,7 @@ runs:
       id: main
       run: node dist/main.cjs
       shell: bash
+      working-directory: ${{ github.action_path }}
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         INPUT_FORM: ${{ inputs.form }}
