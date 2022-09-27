@@ -33,11 +33,11 @@ jobs:
     name: Update bug report
     steps:
       - uses: actions/checkout@v3
-      # needed for the dates step
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm ci
+      # needed for the dates step if using moment
+      # - uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 16
+      # - run: npm ci
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
