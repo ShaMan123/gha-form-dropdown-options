@@ -73,13 +73,16 @@ jobs:
         id: dates
         uses: actions/github-script@v6
         with:
+          # unfortunately I didn't manage to import moment
+          # https://github.com/actions/github-script/issues/275
           script: |
-            const { default: moment } = await import('gha-form-dropdown-options/node_modules/moment/moment.js');
-            return new Array(7).fill(0).map((_, i) =>
-              moment()
-                .add(i + 7, 'd')
-                .format('YYYY-MM-DD'),
-            );
+            function format(dayDiff) {
+              const date = new Date(Date.now() + dayDiff * 24 * 60 * 60 * 1000);
+              return `${date.getFullYear()}-${date.getMonth() + 1}-${
+                date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+              }`;
+            }
+            return new Array(7).fill(0).map((_, i) => format(i + 7));
       - name: Update dates
         id: update_dates
         uses: ./
