@@ -5,6 +5,7 @@
 	"license": "MIT",
 	"author": "ShaMan123",
 	"repository": "https://github.com/ShaMan123/gha-form-dropdown-options",
+	"type": "module",
 	"keywords": [
 		"actions",
 		"issue",
