@@ -46,7 +46,13 @@ body:
       label: Updating Dates
       description: Choose a day next week
       options:
-        - null
+        - '2022-10-04'
+        - '2022-10-05'
+        - '2022-10-06'
+        - '2022-10-07'
+        - '2022-10-08'
+        - '2022-10-09'
+        - '2022-10-10'
     validations:
       required: true
   - type: textarea
