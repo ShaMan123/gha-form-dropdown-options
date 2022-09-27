@@ -20,7 +20,7 @@ body:
       label: Repository Branches
       description: Fetched by action
       options:
-        - undefined
+        - main
     validations:
       required: true
   - type: dropdown
