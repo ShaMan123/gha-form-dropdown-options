@@ -74,7 +74,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { default: moment } = await import('${{ github.workspace }}/node_modules/moment');
+            const { default: moment } = await import('${{ github.workspace }}/node_modules/moment/moment.js');
             return new Array(7).fill(0).map((_, i) =>
               moment()
                 .add(i + 7, 'd')
