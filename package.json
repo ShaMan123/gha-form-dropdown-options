@@ -14,7 +14,8 @@
 		"version",
 		"versions",
 		"dropdown",
-		"list"
+		"list",
+		"options"
 	],
 	"main": "dist/main.cjs",
 	"scripts": {
