@@ -1,5 +1,3 @@
-import github from '@actions/github';
-import { execSync } from 'child_process';
 import * as dotenv from 'dotenv';
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs';
 import assert from 'node:assert/strict';
