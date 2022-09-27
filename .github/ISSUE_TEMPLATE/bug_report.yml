@@ -20,7 +20,7 @@ body:
       label: Repository Branches
       description: Fetched by action
       options:
-        -
+        - undefined
     validations:
       required: true
   - type: dropdown
@@ -29,7 +29,7 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        -
+        - null
     validations:
       required: true
   - type: dropdown
@@ -38,7 +38,7 @@ body:
       label: Updating Dates
       description: Choose a day next week
       options:
-        -
+        - null
     validations:
       required: true
   - type: textarea
