@@ -32,6 +32,7 @@ runs:
   steps:
     # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
     - run: echo "Setting branch for action"
+      shell: bash
     - run: echo "job_ref=${{ github.ref }}" >> $GITHUB_ENV
       shell: bash
     - run: echo "job_ref=${{ github.head_ref }}" >> $GITHUB_ENV
