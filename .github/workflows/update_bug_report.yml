@@ -77,6 +77,10 @@ jobs:
           options: ${{ steps.branches.outputs.result }}
           commit_message: 'chore(): update bug report branches'
           ref: main
+      - name: Checkout ${{ steps.branch.outputs.result }}
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.branch.outputs.result }}
       - name: Update labels
         uses: ./
         with:
