@@ -29,7 +29,15 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        - undefined
+        - bug
+        - documentation
+        - duplicate
+        - enhancement
+        - good first issue
+        - help wanted
+        - invalid
+        - question
+        - wontfix
     validations:
       required: true
   - type: dropdown
