@@ -29,7 +29,7 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        - null
+        - undefined
     validations:
       required: true
   - type: dropdown
