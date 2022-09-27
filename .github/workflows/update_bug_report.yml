@@ -39,18 +39,28 @@ jobs:
         with:
           script: |
             github
-              .getOctokit()
               .rest.repos.listBranches(github.context.repo)
               .then((res) => res.data.map((b) => b.name));
+      - name: Get labels
+        id: labels
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github
+              .rest.issues.listLabelsForRepo(github.context.repo)
+              .then((res) => res.data.map((l) => l.name));
       - name: Update branches
         uses: ./
         with:
           dropdown: branches
           options: ${{ steps.branches.result }}
-
+      - name: Update labels
+        uses: ./
+        with:
+          dropdown: labels
+          options: ${{ steps.labels.result }}
       - name: Get next week
         id: dates
-        # https://github.com/actions/github-script
         uses: actions/github-script@v6
         with:
           script: |

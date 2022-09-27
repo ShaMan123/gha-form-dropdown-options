@@ -15,10 +15,19 @@ body:
         - label: I agree to follow this project's Code of Conduct
           required: true
   - type: dropdown
-    id: dropdown
+    id: branches
     attributes:
-      label: Fetched Branches
-      description: repository's branches
+      label: Repository Branches
+      description: Fetched by action
+      options:
+        -
+    validations:
+      required: true
+  - type: dropdown
+    id: labels
+    attributes:
+      label: Repository labels
+      description: Fetched by action
       options:
         -
     validations:
