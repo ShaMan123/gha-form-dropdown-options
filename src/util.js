@@ -13,8 +13,6 @@ export function writeYAML(file, dropdownId, tags) {
 			)}`,
 		);
 	}
-	const prevOptions = found.attributes.options;
 	found.attributes.options = tags;
 	fs.writeFileSync(file, YAML.dump(content));
-	return prevOptions;
 }

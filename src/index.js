@@ -1,5 +1,4 @@
-import { getInput, setFailed, setOutput } from '@actions/core';
-import github from '@actions/github';
+import { getInput, setFailed } from '@actions/core';
 import { writeYAML } from './util';
 
 async function run() {
@@ -25,8 +24,7 @@ async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		const prevOptions = writeYAML(form, dropdownId, options);
-		setOutput('prev', prevOptions);
+		writeYAML(form, dropdownId, options);
 	} catch (error) {
 		console.error(error);
 		setFailed(error);

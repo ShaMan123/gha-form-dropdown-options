@@ -1,9 +1,9 @@
-name: Issue Forms Version Dropdown
+name: Issue Forms Dropdown Options
 description: Populates options for a version dropdown issue (yaml) form element
 author: ShaMan123
 branding:
-  icon: hash
-  color: black
+  icon: list
+  color: purple
 inputs:
   github_token:
     description: Github token
@@ -24,11 +24,6 @@ inputs:
     description: When set to `true` will not commit the modified yaml form
     default: false
     type: boolean
-outputs:
-  # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#example-declaring-outputs-for-composite-actions
-  previous_options:
-    description: A stringified array of the previous options
-    value: ${{ steps.main.outputs.prev }}
 runs:
   using: composite
   steps:
