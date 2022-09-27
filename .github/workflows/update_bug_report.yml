@@ -40,7 +40,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            github
+            return github
               .rest.repos.listBranches(context.repo)
               .then((res) => res.data.map((b) => b.name));
       - name: Get labels
@@ -49,7 +49,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            github
+            return github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
       - name: Update branches
