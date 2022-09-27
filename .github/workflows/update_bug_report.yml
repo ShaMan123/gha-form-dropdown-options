@@ -73,9 +73,12 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const moment = require('moment');
-            return new array(7).fill(0)
-              .map((_, i) => moment().add(i + 7, 'd').format('YYYY-MM-DD'));
+            const { default: moment } = await import('moment');
+            return new Array(7).fill(0).map((_, i) =>
+              moment()
+                .add(i + 7, 'd')
+                .format('YYYY-MM-DD'),
+            );
       - name: Update dates
         id: update_dates
         uses: ./
