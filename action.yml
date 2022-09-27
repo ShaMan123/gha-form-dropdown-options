@@ -9,7 +9,7 @@ inputs:
     description: Github token
     default: ${{ github.token }}
   ref:
-    description: Github ref/branch to update, inferred by the event type if omitted
+    description: Github ref/branch to update, inferred from the event type if omitted
     type: string
   form:
     description: The location of the yaml form file
