@@ -21,6 +21,7 @@ body:
       description: Fetched by action
       options:
         - main
+        - ref
     validations:
       required: true
   - type: dropdown
