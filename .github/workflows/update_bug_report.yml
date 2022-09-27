@@ -38,6 +38,7 @@ jobs:
         # https://github.com/actions/github-script
         uses: actions/github-script@v6
         with:
+          result-encoding: string
           script: |
             github
               .rest.repos.listBranches(context.repo)
@@ -46,22 +47,23 @@ jobs:
         id: labels
         uses: actions/github-script@v6
         with:
+          result-encoding: string
           script: |
-            const res = await github
+            github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
-            console.log(res);
-            return res;
       - name: Update branches
         uses: ./
         with:
           dropdown: branches
           options: ${{ steps.branches.result }}
+          commit_message: 'chore(): update bug report branches'
       - name: Update labels
         uses: ./
         with:
           dropdown: labels
           options: ${{ steps.labels.result }}
+          commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
         uses: actions/github-script@v6
@@ -76,3 +78,4 @@ jobs:
         with:
           dropdown: dates
           options: ${{ steps.dates.result }}
+          commit_message: 'chore(): update bug report dates'
