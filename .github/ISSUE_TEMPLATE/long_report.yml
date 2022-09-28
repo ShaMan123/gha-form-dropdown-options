@@ -24,7 +24,7 @@ body:
       label: A long list
       description: Generated
       options:
-        - undefined
+        - null
     validations:
       required: true
   - type: dropdown
@@ -33,7 +33,7 @@ body:
       label: Another long list
       description: Generated
       options:
-        - null
+        - undefined
     validations:
       required: true
   - type: textarea
