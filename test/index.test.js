@@ -68,6 +68,7 @@ describe('action', function () {
 			expected,
 		);
 	});
+
 	it('using a template', async function () {
 		fs.unlinkSync(test);
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
@@ -81,6 +82,7 @@ describe('action', function () {
 			},
 			test,
 			expected,
+			'step #1',
 		);
 		assertForm(
 			{
@@ -90,8 +92,9 @@ describe('action', function () {
 				options: ['a', 'b', 'c'],
 				dry_run: true,
 			},
+			test,
 			path.resolve(__dirname, 'a.yml'),
-			expected,
+			'step #2',
 		);
 		assertForm(
 			{
@@ -101,8 +104,9 @@ describe('action', function () {
 				options: ['d', 'e', 'f'],
 				dry_run: true,
 			},
+			test,
 			path.resolve(__dirname, 'b.yml'),
-			expected,
+			'step #3',
 		);
 	});
 });
