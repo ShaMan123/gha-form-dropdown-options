@@ -32,29 +32,19 @@ jobs:
     name: Prepare context for other jobs
     runs-on: ubuntu-latest
     outputs:
-      branch: ${{ steps.branch.outputs.result }}
+      # used for testing this action, needed in order to reference the local action
+      branch: ${{ env.job_ref }}
       branches: ${{ steps.branches.outputs.result }}
       labels: ${{ steps.labels.outputs.result }}
       long: ${{ steps.long.outputs.result }}
       long2: ${{ steps.long2.outputs.result }}
       dates: ${{ steps.dates.outputs.result }}
     steps:
-      - name: 'TEST: Get branch for job'
-        # used for testing this action, needed in order to reference the local action
-        id: branch
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            switch ('${{ github.event_name }}') {
-              case 'pull_request':
-                return '${{ github.head_ref }}';
-              case 'release':
-                return '${{ github.event.repository.default_branch }}';
-              default:
-                return '${{ github.ref }}';
-            }
+      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
+      - run: echo "Setting branch for committing"
+      - run: echo "job_ref=${{ github.ref }}" >> $GITHUB_ENV
+      - run: echo "job_ref=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
+        if: ${{ github.event_name == 'release' }}
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
@@ -107,11 +97,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
+      # https://github.com/actions/checkout#checkout-head
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-          # ref: ${{ needs.pre.outputs.branch }}
-      - run: git checkout HEAD
+          fetch-depth: 2
+          ref: ${{ needs.pre.outputs.branch }}
+      - run: git checkout HEAD^
       - name: Update branches locally
         uses: ./
         with:
@@ -137,7 +128,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
+          ref: ${{ needs.pre.outputs.branch }}
       - run: git checkout HEAD^
       - name: Update long dropdown
         uses: ./
