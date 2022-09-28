@@ -1,7 +1,7 @@
 import { getInput, setFailed } from '@actions/core';
 import { writeYAML } from './util';
 
-async function run() {
+export async function run() {
 	try {
 		const form = getInput('form', { trimWhitespace: true, required: true });
 		const template = getInput('template', { trimWhitespace: true });
@@ -31,5 +31,3 @@ async function run() {
 		setFailed(error);
 	}
 }
-
-run();
