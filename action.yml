@@ -4,6 +4,7 @@ author: ShaMan123
 branding:
   icon: list
   color: purple
+
 inputs:
   github_token:
     description: Github token
@@ -36,6 +37,11 @@ inputs:
     default: false
     type: boolean
 
+outputs:
+  result:
+    description: '`true` if the action pushed'
+    value: ${{ env.response }}
+
 runs:
   using: composite
   steps:
@@ -60,5 +66,7 @@ runs:
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
         git diff --staged --quiet || git commit -m "${{ inputs.commit_message }}"
-        git push
+        response = $(git push --porcelain)
+        echo "response=$response" >> $GITHUB_ENV
+        echo "wwerwefsdfdsfsd $response"
       shell: bash
