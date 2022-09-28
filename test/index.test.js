@@ -25,6 +25,7 @@ function assertForm(
 ) {
 	cp.execSync('node dist/main.cjs', {
 		env: { ...process.env, ...parseInputs(inputs) },
+		stdio: 'inherit',
 	});
 	assert.strictEqual(
 		fs.readFileSync(actualPath).toString().replace(/\s/gm, ''),
@@ -79,6 +80,28 @@ describe('action', function () {
 				dry_run: true,
 			},
 			test,
+			expected,
+		);
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: 'dropdown',
+				options: ['a', 'b', 'c'],
+				dry_run: true,
+			},
+			path.resolve(__dirname, 'a.yml'),
+			expected,
+		);
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: 'empty',
+				options: ['d', 'e', 'f'],
+				dry_run: true,
+			},
+			path.resolve(__dirname, 'b.yml'),
 			expected,
 		);
 	});
