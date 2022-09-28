@@ -57,8 +57,8 @@ describe('action', function () {
 		);
 	});
 	this.afterEach(() => {
-		// fs.unlinkSync(test);
-		// assert.ok(!fs.existsSync(test), 'should cleanup test');
+		fs.unlinkSync(test);
+		assert.ok(!fs.existsSync(test), 'should cleanup test');
 	});
 
 	it('passing options', async function () {
