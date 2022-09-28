@@ -19,6 +19,17 @@ body:
         - label: I agree to follow this project's Code of Conduct
           required: true
   - type: dropdown
+    id: static
+    attributes:
+      label: Static dropdown
+      description: Untouched by action
+      options:
+        - always
+        - here
+        - stale
+    validations:
+      required: true
+  - type: dropdown
     id: long
     attributes:
       label: A long list
