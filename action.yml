@@ -41,7 +41,7 @@ inputs:
 outputs:
   pushed:
     description: pushed to origin
-    value: ${{ steps.commit.outputs.pushed  }}
+    # value: ${{ steps.commit.outputs.pushed  }}
 
 runs:
   using: composite
