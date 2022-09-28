@@ -21,7 +21,6 @@ body:
       description: Fetched by action
       options:
         - main
-        - template
     validations:
       required: true
   - type: dropdown
