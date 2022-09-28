@@ -12,7 +12,11 @@ inputs:
     description: Github ref/branch to update, inferred from the event type if omitted
     type: string
   template:
-    description: The location of the template file to use to build the form, useful for ease of maintenance
+    description: |
+      The location of the template file used to build the form, useful for ease of maintenance
+      Static dropdowns (with populated options) take precedence over their built counterpart
+      Meaning that you should not edit the built form ever
+      See https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598
     type: string
   form:
     description: The location of the yaml form file
