@@ -68,7 +68,7 @@ runs:
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
         UP_TO_DATE=$(git diff --staged --quiet)
-        if [ $UP_TO_DATE ] 
+        if [ $UP_TO_DATE = true ] 
         then
           echo "::set-output name=pushed::false"
         else
