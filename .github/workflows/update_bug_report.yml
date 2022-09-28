@@ -92,11 +92,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
-        # used for testing this action, needed in order to reference the local action
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          ref: ${{ needs.pre.outputs.branch }}
+          fetch-depth: 2
+      - run: git checkout HEAD^
       - name: Update branches
         uses: ./
         with:
@@ -112,11 +111,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
-        # used for testing this action, needed in order to reference the local action
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          ref: ${{ needs.pre.outputs.branch }}
+          fetch-depth: 2
+      - run: git checkout HEAD^
       - name: Update labels
         uses: ./
         with:
@@ -149,11 +147,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
-        # used for testing this action, needed in order to reference the local action
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          ref: ${{ needs.pre.outputs.branch }}
+          fetch-depth: 2
+      - run: git checkout HEAD^
       - name: Update long dropdown
         uses: ./
         with:
