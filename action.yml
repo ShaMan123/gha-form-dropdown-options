@@ -41,7 +41,7 @@ inputs:
 outputs:
   pushed:
     description: pushed to origin
-    value: ${{ steps.commit.outputs.pushed  }}
+    value: ${{ env.pushed  }}
 
 runs:
   using: composite
@@ -69,12 +69,12 @@ runs:
         git add ${{ inputs.form }}
         UNTRACKED=false
         git diff --staged --quiet || UNTRACKED=true
-        printf "dfgdf %s\n" $UNTRACKED
-        echo $UNTRACKED
-        if [ UNTRACKED = true ] then
+        echo "Did modify form? $UNTRACKED"
+        if [ UNTRACKED = true ]; then
           git commit -m "${{ inputs.commit_message }}"
           git push
         fi
         echo "::set-output name=pushed::$UNTRACKED"
+        echo "pushed=$UNTRACKED" >> $GITHUB_ENV
       # https://askubuntu.com/a/29379
       shell: bash
