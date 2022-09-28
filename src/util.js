@@ -1,11 +1,35 @@
 import fs from 'fs';
-import YAML from 'js-yaml';
+import { DEFAULT_SCHEMA, types, dump, load } from 'js-yaml';
+
+// https://github.com/rollup/plugins/issues/1275
+// https://github.com/nodeca/js-yaml-js-types/issues/4
+// import undef from 'js-yaml-js-types/undefined';
+import { undef } from './undef';
+
+types.null.defaultStyle = 'empty';
+const schema = DEFAULT_SCHEMA.extend([undef, types.null]);
+
+export function parseYAML(input) {
+	return load(input, { schema });
+}
+
+export function stringifyYAML(data) {
+	return dump(data, { schema });
+}
+
+export function readYAMLFile(file) {
+	return parseYAML(fs.readFileSync(file).toString());
+}
+
+export function writeYAMLFile(file, data) {
+	fs.writeFileSync(file, stringifyYAML(data));
+}
 
 function readYAML(file, template) {
 	if (template && fs.existsSync(file)) {
 		// avoid overriding existing options by prefill template with actual form
-		const templateContent = YAML.load(fs.readFileSync(template).toString());
-		const content = YAML.load(fs.readFileSync(file).toString());
+		const templateContent = readYAMLFile(template);
+		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
 			const {
@@ -29,7 +53,7 @@ function readYAML(file, template) {
 		});
 		return templateContent;
 	}
-	return YAML.load(fs.readFileSync(template || file).toString());
+	return readYAMLFile(template || file);
 }
 
 export function writeYAML(file, template, dropdownId, tags) {
@@ -45,5 +69,5 @@ export function writeYAML(file, template, dropdownId, tags) {
 		);
 	}
 	found.attributes.options = tags;
-	fs.writeFileSync(file, YAML.dump(content));
+	writeYAMLFile(file, content);
 }
