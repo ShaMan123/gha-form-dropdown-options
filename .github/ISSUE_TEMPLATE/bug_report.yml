@@ -21,6 +21,7 @@ body:
       description: Fetched by action
       options:
         - main
+        - stale
     validations:
       required: true
   - type: dropdown
@@ -37,7 +38,6 @@ body:
         - help wanted
         - invalid
         - question
-        - wontfix
     validations:
       required: true
   - type: dropdown
