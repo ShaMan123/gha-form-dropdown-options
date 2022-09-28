@@ -67,7 +67,7 @@ runs:
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
-        if [ git diff --staged --quiet ] 
+        if [ (git diff --staged --quiet) ] 
         then
           echo "::set-output name=pushed::false"
         else
