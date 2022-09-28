@@ -27,9 +27,11 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '0 0 * * *'
 
+# https://docs.github.com/en/actions/using-jobs/setting-default-values-for-jobs
+defaults:
+  runs-on: ubuntu-latest
+
 jobs:
-  defaults:
-    runs-on: ubuntu-latest
   pre:
     name: Prepare context for other jobs
     steps:
