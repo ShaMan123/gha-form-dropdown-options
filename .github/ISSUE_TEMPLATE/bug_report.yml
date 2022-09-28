@@ -20,7 +20,6 @@ body:
       label: Repository Branches
       description: Fetched by action
       options:
-        - b
         - main
         - no-checkout
     validations:
