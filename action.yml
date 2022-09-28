@@ -13,10 +13,14 @@ inputs:
     type: string
   template:
     description: |
-      The location of the template file used to build the form, useful for ease of maintenance
-      Static dropdowns (with populated options) take precedence over their built counterpart
-      Meaning that you should not edit the built form ever
-      See https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598
+      The location of the template file used to build the form, useful for ease of maintenance.
+
+      Dynamic dropdowns will persist between action runs.
+      Static dropdowns (dropdowns with populated options) take precedence over their built counterpart,
+      meaning that you should not edit the built form ever,
+      see https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598.
+
+      This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
     type: string
   form:
     description: The location of the yaml form file
