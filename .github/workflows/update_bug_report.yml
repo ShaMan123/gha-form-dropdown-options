@@ -119,12 +119,13 @@ jobs:
           options: ${{ needs.pre.outputs.labels }}
           dry_run: true
       - name: Update dates and commit
-        id: update_dates
+        id: commit
         uses: ./
         with:
           dropdown: dates
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
+      - run: echo ${{ steps.commit.output.pushed }}
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest

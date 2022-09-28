@@ -37,16 +37,20 @@ inputs:
     default: false
     type: boolean
 
+# https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
-  result:
-    description: '`true` if the action pushed'
-    value: ${{ env.response }}
+  stdout:
+    description: push command stdout
+    value: ${{ steps.commit.outputs.stdout }}
+  pushed:
+    description: pushed to origin
+    value: ${{ !contains(steps.commit.outputs.stdout, 'up-to-date')  }}
 
 runs:
   using: composite
   steps:
     - name: Update ${{ inputs.form }}
-      id: main
+      id: process
       run: |
         echo "Updating ${{ inputs.form }}"
         node ${{ github.action_path }}/dist/main.cjs
@@ -59,6 +63,7 @@ runs:
         INPUT_OPTIONS: ${{ inputs.options }}
         INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
     - name: Commit
+      id: commit
       if: ${{ !fromJSON(inputs.dry_run) }}
       run: |
         echo "Committing ${{ inputs.form }}"
@@ -66,6 +71,5 @@ runs:
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
         git diff --staged --quiet || git commit -m "${{ inputs.commit_message }}"
-        response=$(git push)
-        echo "mip $response"
+        echo "::set-output name=stdout::$(git push)"
       shell: bash
