@@ -6502,7 +6502,8 @@ function writeYAMLFile(file, data) {
 
 function readYAML(file, template) {
 	if (template && fs__default["default"].existsSync(file)) {
-		// avoid overriding existing options by prefill template with actual form
+		// avoid overriding existing options by prefilling template with actual form data
+		// avoid prefilling static dropdown (with populated options) in case the template has been updated
 		const templateContent = readYAMLFile(template);
 		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
