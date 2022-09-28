@@ -69,11 +69,11 @@ runs:
         git add ${{ inputs.form }}
         UNTRACKED=false
         git diff --staged --quiet || UNTRACKED=true
-        echo "Did modify form? $UNTRACKED"
         if [ UNTRACKED = true ]; then
+          echo "Form ${{ inputs.form }} has been updated"
           git commit -m "${{ inputs.commit_message }}"
+          git push
         fi
-        git push
         echo "::set-output name=pushed::$UNTRACKED"
       # https://askubuntu.com/a/29379
       shell: bash
