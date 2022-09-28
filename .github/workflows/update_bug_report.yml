@@ -38,8 +38,8 @@ jobs:
       long: ${{ steps.long.outputs.result }}
       long2: ${{ steps.long2.outputs.result }}
     steps:
-      # used for testing this action, needed in order to reference the local action
       - name: 'TEST: Get branch for job'
+        # used for testing this action, needed in order to reference the local action
         id: branch
         uses: actions/github-script@v6
         with:
@@ -79,21 +79,21 @@ jobs:
         with:
           result-encoding: string
           script: |
-            return new Array(500).fill(0).map((_, i) => `#${i}`);
+            return new Array(500).fill(0).map((_, i) => `#${i + 1}`);
       - name: Generate another long array
         id: long2
         uses: actions/github-script@v6
         with:
           result-encoding: string
           script: |
-            return new Array(500).fill(0).map((_, i) => `#${i}`).reverse();
+            return new Array(500).fill(0).map((_, i) => `#${i + 1}`).reverse();
   update-bug-report-main:
     name: Update bug report on `main`
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      # used for testing this action, needed in order to reference the local action
       - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
+        # used for testing this action, needed in order to reference the local action
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
@@ -112,8 +112,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      # used for testing this action, needed in order to reference the local action
       - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
+        # used for testing this action, needed in order to reference the local action
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
@@ -149,8 +149,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      # used for testing this action, needed in order to reference the local action
       - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
+        # used for testing this action, needed in order to reference the local action
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
@@ -163,7 +163,7 @@ jobs:
           options: ${{ needs.pre.outputs.long }}
           commit_message: 'chore(): update long report / long dropdown'
       - name: Update long2 dropdown
-        description: In this step we don't use the template because it will override the previous step
+        # In this step we don't use the template because it will override the previous step and clear out `body.long` dropdown
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/long_report.yml
