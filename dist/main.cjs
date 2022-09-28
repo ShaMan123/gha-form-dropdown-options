@@ -6490,7 +6490,6 @@ var jsYaml = {
 };
 
 function readYAML(file, template) {
-	console.log({ file, template });
 	if (template && fs__default["default"].existsSync(file)) {
 		// avoid overriding existing options by prefill template with actual form
 		const templateContent = jsYaml.load(fs__default["default"].readFileSync(template).toString());

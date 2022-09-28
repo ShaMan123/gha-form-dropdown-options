@@ -2,7 +2,6 @@ import fs from 'fs';
 import YAML from 'js-yaml';
 
 function readYAML(file, template) {
-	console.log({ file, template });
 	if (template && fs.existsSync(file)) {
 		// avoid overriding existing options by prefill template with actual form
 		const templateContent = YAML.load(fs.readFileSync(template).toString());
