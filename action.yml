@@ -69,7 +69,7 @@ runs:
         git add ${{ inputs.form }}
         if [git diff --staged --quiet] then
           echo "::set-output name=pushed::false"
-        else 
+        else then
           git commit -m "${{ inputs.commit_message }}"
           git push
           echo "::set-output name=pushed::true"
