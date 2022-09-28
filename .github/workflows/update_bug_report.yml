@@ -163,7 +163,7 @@ jobs:
           options: ${{ needs.pre.outputs.long }}
           commit_message: 'chore(): update long report / long dropdown'
       - name: Update long2 dropdown
-        # In this step we don't use the template because it will override the previous step and clear out `body.long` dropdown
+        # In this step we don't use the `template` option because it will override the previous step and clear out `long` dropdown
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/long_report.yml
