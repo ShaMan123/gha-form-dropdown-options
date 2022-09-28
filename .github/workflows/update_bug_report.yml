@@ -31,6 +31,10 @@ jobs:
   pre:
     name: Prepare context for other jobs
     runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.branch.outputs.result }}
+      branches: ${{ steps.branches.outputs.result }}
+      labels: ${{ steps.labels.outputs.result }}
     steps:
       # used for testing this action, needed in order to reference the local action
       - name: 'TEST: Get branch for job'
@@ -73,35 +77,35 @@ jobs:
     needs: pre
     steps:
       # used for testing this action, needed in order to reference the local action
-      - name: 'TEST: Checkout ${{ jobs.pre.steps.branch.outputs.result }}'
+      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
         uses: actions/checkout@v3
         with:
-          ref: ${{ jobs.pre.steps.branch.outputs.result }}
+          ref: ${{ needs.pre.outputs.branch }}
       - name: Update branches
         uses: ./
         with:
           dropdown: branches
-          options: ${{ steps.branches.outputs.result }}
+          options: ${{ needs.pre.outputs.branches }}
           commit_message: 'chore(): update bug report branches'
           # This option will checkout the local branch to `main`
           # Any consequent steps will run in the same context
           # That is why we isolate it in a separate job
           ref: main
   update-bug-report:
-    name: Update bug report on branch `${{ jobs.pre.steps.branch.outputs.result }}`
+    name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
     needs: pre
     steps:
       # used for testing this action, needed in order to reference the local action
-      - name: 'TEST: Checkout ${{ jobs.pre.steps.branch.outputs.result }}'
+      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
         uses: actions/checkout@v3
         with:
-          ref: ${{ jobs.pre.steps.branch.outputs.result }}
+          ref: ${{ needs.pre.outputs.branch }}
       - name: Update labels
         uses: ./
         with:
           dropdown: labels
-          options: ${{ jobs.pre.steps.labels.outputs.result }}
+          options: ${{ needs.pre.outputs.branch }}
           commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
