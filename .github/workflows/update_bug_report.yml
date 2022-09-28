@@ -37,6 +37,7 @@ jobs:
       labels: ${{ steps.labels.outputs.result }}
       long: ${{ steps.long.outputs.result }}
       long2: ${{ steps.long2.outputs.result }}
+      dates: ${{ steps.dates.outputs.result }}
     steps:
       - name: 'TEST: Get branch for job'
         # used for testing this action, needed in order to reference the local action
@@ -87,36 +88,6 @@ jobs:
           result-encoding: string
           script: |
             return new Array(500).fill(0).map((_, i) => `#${i + 1}`).reverse();
-  update-bug-report-m:
-    name: Update bug report on `main`
-    runs-on: ubuntu-latest
-    needs: pre
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - run: git checkout HEAD^
-      - name: Update branches
-        uses: ./
-        with:
-          dropdown: branches
-          options: ${{ needs.pre.outputs.branches }}
-          commit_message: 'chore(): update bug report branches'
-  update-bug-report:
-    name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
-    runs-on: ubuntu-latest
-    needs: pre
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - run: git checkout HEAD^
-      - name: Update labels
-        uses: ./
-        with:
-          dropdown: labels
-          options: ${{ needs.pre.outputs.labels }}
-          commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
         uses: actions/github-script@v6
@@ -131,13 +102,34 @@ jobs:
               }`;
             }
             return new Array(7).fill(0).map((_, i) => format(i + 7));
-      - name: Update dates
+  update-bug-report:
+    name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
+    runs-on: ubuntu-latest
+    needs: pre
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          # ref: ${{ needs.pre.outputs.branch }}
+      - run: git checkout HEAD
+      - name: Update branches locally
+        uses: ./
+        with:
+          dropdown: branches
+          options: ${{ needs.pre.outputs.branches }}
+          dry_run: true
+      - name: Update labels locally
+        uses: ./
+        with:
+          dropdown: labels
+          options: ${{ needs.pre.outputs.labels }}
+          dry_run: true
+      - name: Update dates and commit
         id: update_dates
         uses: ./
         with:
           dropdown: dates
-          options: ${{ steps.dates.outputs.result }}
-          commit_message: 'chore(): update bug report dates'
+          options: ${{ needs.pre.outputs.dates }}
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
