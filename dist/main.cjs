@@ -6513,14 +6513,7 @@ function readYAML(file, template) {
 			if (
 				!options ||
 				!options.length ||
-				(Array.isArray(options) &&
-					options.every((option) => {
-						try {
-							return !option || !JSON.parse(option);
-						} catch (error) {
-							return true;
-						}
-					}))
+				(Array.isArray(options) && options.every((option) => !option))
 			) {
 				templateContent.body[index].attributes.options =
 					content.body[index].attributes.options;

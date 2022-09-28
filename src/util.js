@@ -4,7 +4,7 @@ import { DEFAULT_SCHEMA, types, dump, load } from 'js-yaml';
 // https://github.com/rollup/plugins/issues/1275
 // https://github.com/nodeca/js-yaml-js-types/issues/4
 // import undef from 'js-yaml-js-types/undefined';
-import { undef } from './undef';
+import { undef } from './undef.js';
 
 types.null.defaultStyle = 'empty';
 const schema = DEFAULT_SCHEMA.extend([undef, types.null]);
@@ -38,14 +38,7 @@ function readYAML(file, template) {
 			if (
 				!options ||
 				!options.length ||
-				(Array.isArray(options) &&
-					options.every((option) => {
-						try {
-							return !option || !JSON.parse(option);
-						} catch (error) {
-							return true;
-						}
-					}))
+				(Array.isArray(options) && options.every((option) => !option))
 			) {
 				templateContent.body[index].attributes.options =
 					content.body[index].attributes.options;
