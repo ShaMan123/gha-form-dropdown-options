@@ -67,7 +67,7 @@ describe('action', function () {
 			expected,
 		);
 	});
-	it('using template', async function () {
+	it('using a template', async function () {
 		fs.unlinkSync(test);
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
