@@ -30,6 +30,10 @@ inputs:
     description: When set to `true` will not commit the modified yaml form
     default: false
     type: boolean
+outputs:
+  ref:
+    description: Github ref/branch checked out and updated by the action
+    value: ${{ env.job_ref }}
 runs:
   using: composite
   steps:
