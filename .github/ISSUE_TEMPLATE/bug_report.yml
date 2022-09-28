@@ -21,6 +21,7 @@ body:
       description: Fetched by action
       options:
         - main
+        - no-checkout
     validations:
       required: true
   - type: dropdown
