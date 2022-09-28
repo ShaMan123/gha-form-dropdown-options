@@ -103,7 +103,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      # https://github.com/actions/checkout#checkout-head
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
