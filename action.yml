@@ -69,7 +69,7 @@ runs:
         git add ${{ inputs.form }}
         DIFF=false
         git diff --staged --quiet || DIFF=true
-        printf "dfgdf %s\n" DIFF
+        printf "dfgdf %s\n" $DIFF
         echo $DIFF
         if [ DIFF = true ]; then
           git commit -m "${{ inputs.commit_message }}"
