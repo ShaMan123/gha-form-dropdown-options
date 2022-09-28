@@ -38,6 +38,7 @@ body:
         - help wanted
         - invalid
         - question
+        - wontfix
     validations:
       required: true
   - type: dropdown
