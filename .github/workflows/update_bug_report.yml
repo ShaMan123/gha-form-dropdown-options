@@ -43,10 +43,10 @@ jobs:
       # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
       - name: Setting branch for committing
         run: |
-          if ${{ github.event_name == 'release' }} then
-            echo "job_ref=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
+          if [ ${{ github.event_name }} = release ]
+            then echo "job_ref=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
           else
-            echo "job_ref=${{ github.ref }}" >> $GITHUB_ENV
+            then echo "job_ref=${{ github.ref }}" >> $GITHUB_ENV
           fi
       - name: Get branches
         id: branches
