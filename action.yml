@@ -72,8 +72,8 @@ runs:
         echo "Did modify form? $UNTRACKED"
         if [ UNTRACKED = true ]; then
           git commit -m "${{ inputs.commit_message }}"
-          git push
         fi
+        git push
         echo "::set-output name=pushed::$UNTRACKED"
       # https://askubuntu.com/a/29379
       shell: bash
