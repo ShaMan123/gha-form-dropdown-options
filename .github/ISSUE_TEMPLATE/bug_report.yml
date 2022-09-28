@@ -35,6 +35,10 @@ body:
         - documentation
         - duplicate
         - enhancement
+        - good first issue
+        - help wanted
+        - invalid
+        - question
         - wontfix
     validations:
       required: true
@@ -47,6 +51,8 @@ body:
         - '2022-10-05'
         - '2022-10-06'
         - '2022-10-07'
+        - '2022-10-08'
+        - '2022-10-09'
         - '2022-10-10'
         - '2022-10-11'
     validations:
