@@ -28,11 +28,12 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  pre:
-    name: Prepare context for other jobs
+  update-bug-report:
     runs-on: ubuntu-latest
+    name: Update bug report
     steps:
-      # used for testing this action, needed in order to reference the local action
+      # used for testing this action
+      # needed to reference the local action
       - name: 'TEST: Get branch for job'
         id: branch
         uses: actions/github-script@v6
@@ -48,6 +49,11 @@ jobs:
               default:
                 return '${{ github.ref }}';
             }
+      # used for testing this action
+      - name: 'TEST: Checkout ${{ steps.branch.outputs.result }}'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.branch.outputs.result }}
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
@@ -67,41 +73,23 @@ jobs:
             return github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
-  update-bug-report-main:
-    name: Update bug report on `main`
-    runs-on: ubuntu-latest
-    needs: pre
-    steps:
-      # used for testing this action, needed in order to reference the local action
-      - name: 'TEST: Checkout ${{ jobs.pre.steps.branch.outputs.result }}'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ jobs.pre.steps.branch.outputs.result }}
       - name: Update branches
         uses: ./
         with:
           dropdown: branches
           options: ${{ steps.branches.outputs.result }}
           commit_message: 'chore(): update bug report branches'
-          # This option will checkout the local branch to `main`
-          # Any consequent steps will run in the same context
-          # That is why we isolate it in a separate job
           ref: main
-  update-bug-report:
-    name: Update bug report on branch `${{ jobs.pre.steps.branch.outputs.result }}`
-    runs-on: ubuntu-latest
-    needs: pre
-    steps:
-      # used for testing this action, needed in order to reference the local action
-      - name: 'TEST: Checkout ${{ jobs.pre.steps.branch.outputs.result }}'
+      # used for testing this action
+      - name: 'TEST: back to ${{ steps.branch.outputs.result }}'
         uses: actions/checkout@v3
         with:
-          ref: ${{ jobs.pre.steps.branch.outputs.result }}
+          ref: ${{ steps.branch.outputs.result }}
       - name: Update labels
         uses: ./
         with:
           dropdown: labels
-          options: ${{ jobs.pre.steps.labels.outputs.result }}
+          options: ${{ steps.labels.outputs.result }}
           commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
