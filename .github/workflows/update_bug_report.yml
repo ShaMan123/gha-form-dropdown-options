@@ -105,7 +105,7 @@ jobs:
         uses: ./
         with:
           dropdown: labels
-          options: ${{ needs.pre.outputs.branch }}
+          options: ${{ needs.pre.outputs.labels }}
           commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
