@@ -63,7 +63,6 @@ runs:
       id: commit
       if: ${{ !fromJSON(inputs.dry_run) }}
       run: |
-        echo "Committing ${{ inputs.form }}"
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
@@ -71,6 +70,7 @@ runs:
         git diff --staged --quiet || UNTRACKED=true
         if [ $UNTRACKED = true ]; then
           echo "Form ${{ inputs.form }} has been updated"
+          echo "Committing ${{ inputs.form }}"
           git commit -m "${{ inputs.commit_message }}"
           git push
         fi
