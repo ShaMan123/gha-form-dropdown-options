@@ -125,7 +125,7 @@ jobs:
           dropdown: dates
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
-      - run: echo ${{ steps.commit.output.pushed }} ${{ steps.commit.output.stdout }}
+      - run: echo "${{ steps.commit.output.pushed }}"
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
