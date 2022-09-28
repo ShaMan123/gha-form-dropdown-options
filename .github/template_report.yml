@@ -1,0 +1,65 @@
+name: 🐛🐛🐛🐛🐛🐛🐛 Bug Report
+description: A example of using template and build forms
+title: '[Bug]: '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form has a really long dropdown making it unreadable and hard to maintain
+        Using the `template` option allows us to work on a clean and readable file making DX better
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: CheckList
+      description: By submitting this issue, you agree to follow our [Code of Conduct]()
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+  - type: dropdown
+    id: long
+    attributes:
+      label: A long list
+      description: Generated
+      options:
+        -
+    validations:
+      required: true
+  - type: dropdown
+    id: long2
+    attributes:
+      label: Another long list
+      description: Generated
+      options:
+        -
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps To Reproduce
+      value: |
+        1. 
+        2. 
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: Provide screenshots/screencasts if relevant
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error Message & Stack Trace
+      description: Provide logging outputs/errors if relevant
+    validations:
+      required: false
