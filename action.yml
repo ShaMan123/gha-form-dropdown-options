@@ -11,6 +11,9 @@ inputs:
   ref:
     description: Github ref/branch to update, inferred from the event type if omitted
     type: string
+  template:
+    description: The location of the template file to use to build the form, useful for ease of maintenance
+    type: string
   form:
     description: The location of the yaml form file
     default: '.github/ISSUE_TEMPLATE/bug_report.yml'
@@ -55,6 +58,7 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        INPUT_TEMPLATE: ${{ inputs.template }}
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}

@@ -6489,8 +6489,8 @@ var jsYaml = {
 	safeDump: safeDump
 };
 
-function writeYAML(file, dropdownId, tags) {
-	const content = jsYaml.load(fs__default["default"].readFileSync(file).toString());
+function writeYAML(file, template, dropdownId, tags) {
+	const content = jsYaml.load(fs__default["default"].readFileSync(template || file).toString());
 	const found = content.body.find(
 		(entry) => entry.id === dropdownId && entry.type === 'dropdown',
 	);
@@ -6508,6 +6508,7 @@ function writeYAML(file, dropdownId, tags) {
 async function run() {
 	try {
 		const form = coreExports.getInput('form', { trimWhitespace: true, required: true });
+		const template = coreExports.getInput('template', { trimWhitespace: true });
 		const dropdownId = coreExports.getInput('dropdown', {
 			trimWhitespace: true,
 			required: true,
@@ -6528,7 +6529,7 @@ async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		writeYAML(form, dropdownId, options);
+		writeYAML(form, template, dropdownId, options);
 	} catch (error) {
 		console.error(error);
 		coreExports.setFailed(error);

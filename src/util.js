@@ -1,8 +1,8 @@
 import fs from 'fs';
 import YAML from 'js-yaml';
 
-export function writeYAML(file, dropdownId, tags) {
-	const content = YAML.load(fs.readFileSync(file).toString());
+export function writeYAML(file, template, dropdownId, tags) {
+	const content = YAML.load(fs.readFileSync(template || file).toString());
 	const found = content.body.find(
 		(entry) => entry.id === dropdownId && entry.type === 'dropdown',
 	);
