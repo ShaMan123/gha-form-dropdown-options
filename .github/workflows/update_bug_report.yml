@@ -79,14 +79,14 @@ jobs:
         with:
           result-encoding: string
           script: |
-            new Array(500).fill(0).map((_, i) => `#${i}`);
+            return new Array(500).fill(0).map((_, i) => `#${i}`);
       - name: Generate another long array
         id: long2
         uses: actions/github-script@v6
         with:
           result-encoding: string
           script: |
-            new Array(500).fill(0).map((_, i) => `#${i}`).reverse();
+            return new Array(500).fill(0).map((_, i) => `#${i}`).reverse();
   update-bug-report-main:
     name: Update bug report on `main`
     runs-on: ubuntu-latest
