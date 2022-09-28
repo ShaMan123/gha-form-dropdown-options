@@ -16,6 +16,7 @@ on:
   workflow_dispatch:
 
   # use in production
+  # needs ref setup
   release:
     branches:
       - main
