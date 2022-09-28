@@ -16,19 +16,15 @@ body:
     attributes:
       label: should be cleared
       options:
-        - a
-        - b
-        - c
+        - 
+        - 
     validations:
       required: true
   - type: dropdown
     id: empty
     attributes:
       label: should be cleared
-      options:
-        - d
-        - e
-        - f
+      options: 
     validations:
       required: true
   - type: dropdown
@@ -38,7 +34,7 @@ body:
       options:
         - u
         - v
-        -
-        -
+        - 
+        - 
     validations:
       required: true

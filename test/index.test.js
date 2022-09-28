@@ -1,9 +1,10 @@
 import * as dotenv from 'dotenv';
 import fs from 'fs';
 import assert from 'node:assert/strict';
-import path from 'node:path';
 import cp from 'node:child_process';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readYAMLFile } from '../src/util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,6 +18,14 @@ function parseInputs(inputs) {
 	}, {});
 }
 
+function assertYAMLIsEqual(actualPath, expectedPath, message) {
+	assert.deepStrictEqual(
+		readYAMLFile(actualPath),
+		readYAMLFile(expectedPath),
+		message,
+	);
+}
+
 function assertForm(
 	inputs,
 	actualPath,
@@ -27,11 +36,7 @@ function assertForm(
 		env: { ...process.env, ...parseInputs(inputs) },
 		stdio: 'inherit',
 	});
-	assert.strictEqual(
-		fs.readFileSync(actualPath).toString().replace(/\s/gm, ''),
-		fs.readFileSync(expectedPath).toString().replace(/\s/gm, ''),
-		message,
-	);
+	assertYAMLIsEqual(actualPath, expectedPath, message);
 }
 
 describe('action', function () {
@@ -52,8 +57,8 @@ describe('action', function () {
 		);
 	});
 	this.afterEach(() => {
-		fs.unlinkSync(test);
-		assert.ok(!fs.existsSync(test), 'should cleanup test');
+		// fs.unlinkSync(test);
+		// assert.ok(!fs.existsSync(test), 'should cleanup test');
 	});
 
 	it('passing options', async function () {
@@ -70,6 +75,22 @@ describe('action', function () {
 	});
 
 	it('using a template', async function () {
+		fs.unlinkSync(test);
+		assert.ok(!fs.existsSync(test), 'should cleanup test file');
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: 'version',
+				options: ['1.2.3', '4.5.6', '7.8.9'],
+				dry_run: true,
+			},
+			test,
+			expected,
+		);
+	});
+
+	it('using a template in multiple steps', async function () {
 		fs.unlinkSync(test);
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
@@ -107,6 +128,24 @@ describe('action', function () {
 			test,
 			path.resolve(__dirname, 'b.yml'),
 			'step #3',
+		);
+	});
+
+	it('editing a template', async function () {
+		const dist = path.resolve(__dirname, 'dist.yml');
+		fs.writeFileSync(test, fs.readFileSync(dist));
+		assertYAMLIsEqual(test, dist, 'should prepare test');
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: 'version',
+				options: ['1.2.3', '4.5.6', '7.8.9'],
+				dry_run: true,
+			},
+			test,
+			expected,
+			'should preserve template static dropdown',
 		);
 	});
 });

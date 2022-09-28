@@ -25,3 +25,14 @@ body:
       options:
     validations:
       required: true
+  - type: dropdown
+    id: static
+    attributes:
+      label: should be copied to the build form
+      options:
+        - u
+        - v
+        -
+        - null
+    validations:
+      required: true
