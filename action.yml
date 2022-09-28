@@ -11,6 +11,17 @@ inputs:
   ref:
     description: Github ref/branch to update, inferred from the event type if omitted
     type: string
+  template:
+    description: |
+      The location of the template file used to build the form, useful for ease of maintenance.
+
+      Dynamic dropdowns will persist between action runs.
+      Static dropdowns (dropdowns with populated options) take precedence over their built counterpart,
+      meaning that you should not edit the built form ever,
+      see https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598.
+
+      This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
+    type: string
   form:
     description: The location of the yaml form file
     default: '.github/ISSUE_TEMPLATE/bug_report.yml'
@@ -27,6 +38,10 @@ inputs:
     description: When set to `true` will not commit the modified yaml form
     default: false
     type: boolean
+outputs:
+  ref:
+    description: Github ref/branch checked out and updated by the action
+    value: ${{ env.job_ref }}
 runs:
   using: composite
   steps:
@@ -55,6 +70,7 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        INPUT_TEMPLATE: ${{ inputs.template }}
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}

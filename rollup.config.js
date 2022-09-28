@@ -4,7 +4,7 @@ import json from '@rollup/plugin-json';
 import externals from 'rollup-plugin-node-externals';
 
 export default {
-	input: 'src/index.js',
+	input: 'src/bin.js',
 	output: {
 		file: 'dist/main.cjs',
 		format: 'cjs',

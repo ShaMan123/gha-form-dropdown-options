@@ -6,9 +6,7 @@ body:
     attributes:
       label: version
       options:
-        - 1.2.3
-        - 4.5.6
-        - 7.8.9
+        -
     validations:
       required: true
   - type: dropdown
@@ -17,7 +15,7 @@ body:
       label: should be cleared
       options:
         -
-        -
+        - null
     validations:
       required: true
   - type: dropdown
@@ -32,9 +30,7 @@ body:
     attributes:
       label: should be copied to the build form
       options:
-        - u
-        - v
-        -
-        -
+        - x
+        - z
     validations:
       required: true

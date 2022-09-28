@@ -16,8 +16,9 @@ body:
     attributes:
       label: should be cleared
       options:
-        -
-        -
+        - a
+        - b
+        - c
     validations:
       required: true
   - type: dropdown

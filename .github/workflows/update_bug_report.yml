@@ -28,13 +28,18 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  update-bug-report:
+  pre:
+    name: Prepare context for other jobs
     runs-on: ubuntu-latest
-    name: Update bug report
+    outputs:
+      branch: ${{ steps.branch.outputs.result }}
+      branches: ${{ steps.branches.outputs.result }}
+      labels: ${{ steps.labels.outputs.result }}
+      long: ${{ steps.long.outputs.result }}
+      long2: ${{ steps.long2.outputs.result }}
     steps:
-      # used for testing this action
-      # needed to reference the local action
       - name: 'TEST: Get branch for job'
+        # used for testing this action, needed in order to reference the local action
         id: branch
         uses: actions/github-script@v6
         with:
@@ -49,11 +54,6 @@ jobs:
               default:
                 return '${{ github.ref }}';
             }
-      # used for testing this action
-      - name: 'TEST: Checkout ${{ steps.branch.outputs.result }}'
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ steps.branch.outputs.result }}
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
@@ -73,23 +73,55 @@ jobs:
             return github
               .rest.issues.listLabelsForRepo(context.repo)
               .then((res) => res.data.map((l) => l.name));
+      - name: Generate a long array
+        id: long
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            return new Array(500).fill(0).map((_, i) => `#${i + 1}`);
+      - name: Generate another long array
+        id: long2
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            return new Array(500).fill(0).map((_, i) => `#${i + 1}`).reverse();
+  update-bug-report-main:
+    name: Update bug report on `main`
+    runs-on: ubuntu-latest
+    needs: pre
+    steps:
+      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
+        # used for testing this action, needed in order to reference the local action
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.pre.outputs.branch }}
       - name: Update branches
         uses: ./
         with:
           dropdown: branches
-          options: ${{ steps.branches.outputs.result }}
+          options: ${{ needs.pre.outputs.branches }}
           commit_message: 'chore(): update bug report branches'
+          # This option will checkout the local branch to `main`
+          # Any consequent steps will run in the same context
+          # That is why we isolate it in a separate job
           ref: main
-      # used for testing this action
-      - name: 'TEST: back to ${{ steps.branch.outputs.result }}'
+  update-bug-report:
+    name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
+    runs-on: ubuntu-latest
+    needs: pre
+    steps:
+      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
+        # used for testing this action, needed in order to reference the local action
         uses: actions/checkout@v3
         with:
-          ref: ${{ steps.branch.outputs.result }}
+          ref: ${{ needs.pre.outputs.branch }}
       - name: Update labels
         uses: ./
         with:
           dropdown: labels
-          options: ${{ steps.labels.outputs.result }}
+          options: ${{ needs.pre.outputs.labels }}
           commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
@@ -112,3 +144,29 @@ jobs:
           dropdown: dates
           options: ${{ steps.dates.outputs.result }}
           commit_message: 'chore(): update bug report dates'
+  update-long-report:
+    name: Update long report on branch `${{ needs.pre.outputs.branch }}`
+    runs-on: ubuntu-latest
+    needs: pre
+    steps:
+      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
+        # used for testing this action, needed in order to reference the local action
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.pre.outputs.branch }}
+      - name: Update long dropdown
+        uses: ./
+        with:
+          template: .github/template_report.yml
+          form: .github/ISSUE_TEMPLATE/long_report.yml
+          dropdown: long
+          options: ${{ needs.pre.outputs.long }}
+          commit_message: 'chore(): update long report / long dropdown'
+      - name: Update long2 dropdown
+        uses: ./
+        with:
+          template: .github/template_report.yml
+          form: .github/ISSUE_TEMPLATE/long_report.yml
+          dropdown: long2
+          options: ${{ needs.pre.outputs.long2 }}
+          commit_message: 'chore(): update long report / long2 dropdown'

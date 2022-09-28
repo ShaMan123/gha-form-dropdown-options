@@ -9,3 +9,30 @@ body:
         -
     validations:
       required: true
+  - type: dropdown
+    id: dropdown
+    attributes:
+      label: should be cleared
+      options:
+        -
+        - null
+    validations:
+      required: true
+  - type: dropdown
+    id: empty
+    attributes:
+      label: should be cleared
+      options:
+    validations:
+      required: true
+  - type: dropdown
+    id: static
+    attributes:
+      label: should be copied to the build form
+      options:
+        - u
+        - v
+        -
+        - null
+    validations:
+      required: true

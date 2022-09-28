@@ -3039,7 +3039,7 @@ Schema$1.prototype.extend = function extend(definition) {
 };
 
 
-var schema = Schema$1;
+var schema$1 = Schema$1;
 
 var str = new type('tag:yaml.org,2002:str', {
   kind: 'scalar',
@@ -3056,7 +3056,7 @@ var map = new type('tag:yaml.org,2002:map', {
   construct: function (data) { return data !== null ? data : {}; }
 });
 
-var failsafe = new schema({
+var failsafe = new schema$1({
   explicit: [
     str,
     seq,
@@ -6431,24 +6431,11 @@ var dumper = {
 	dump: dump_1
 };
 
-function renamed(from, to) {
-  return function () {
-    throw new Error('Function yaml.' + from + ' is removed in js-yaml 4. ' +
-      'Use yaml.' + to + ' instead, which is now safe by default.');
-  };
-}
-
 
 var Type                = type;
-var Schema              = schema;
-var FAILSAFE_SCHEMA     = failsafe;
-var JSON_SCHEMA         = json;
-var CORE_SCHEMA         = core;
 var DEFAULT_SCHEMA      = _default;
 var load                = loader.load;
-var loadAll             = loader.loadAll;
 var dump                = dumper.dump;
-var YAMLException       = exception;
 
 // Re-export all types in case user wants to create custom schema
 var types = {
@@ -6467,30 +6454,79 @@ var types = {
   str:       str
 };
 
-// Removed functions from JS-YAML 3.0.x
-var safeLoad            = renamed('safeLoad', 'load');
-var safeLoadAll         = renamed('safeLoadAll', 'loadAll');
-var safeDump            = renamed('safeDump', 'dump');
+/**
+ * source: https://github.com/nodeca/js-yaml-js-types/blob/master/undefined.js
+ * https://github.com/rollup/plugins/issues/1275
+ * https://github.com/nodeca/js-yaml-js-types/issues/4
+ */
 
-var jsYaml = {
-	Type: Type,
-	Schema: Schema,
-	FAILSAFE_SCHEMA: FAILSAFE_SCHEMA,
-	JSON_SCHEMA: JSON_SCHEMA,
-	CORE_SCHEMA: CORE_SCHEMA,
-	DEFAULT_SCHEMA: DEFAULT_SCHEMA,
-	load: load,
-	loadAll: loadAll,
-	dump: dump,
-	YAMLException: YAMLException,
-	types: types,
-	safeLoad: safeLoad,
-	safeLoadAll: safeLoadAll,
-	safeDump: safeDump
-};
+function resolveJavascriptUndefined() {
+	return true;
+}
+function constructJavascriptUndefined() {
+	/*eslint-disable no-undefined*/
+	return undefined;
+}
+function representJavascriptUndefined() {
+	return '';
+}
+function isUndefined(object) {
+	return typeof object === 'undefined';
+}
+const undef = new Type('tag:yaml.org,2002:js/undefined', {
+	kind: 'scalar',
+	resolve: resolveJavascriptUndefined,
+	construct: constructJavascriptUndefined,
+	predicate: isUndefined,
+	represent: representJavascriptUndefined,
+});
 
-function writeYAML(file, dropdownId, tags) {
-	const content = jsYaml.load(fs__default["default"].readFileSync(file).toString());
+types.null.defaultStyle = 'empty';
+const schema = DEFAULT_SCHEMA.extend([undef, types.null]);
+
+function parseYAML(input) {
+	return load(input, { schema });
+}
+
+function stringifyYAML(data) {
+	return dump(data, { schema });
+}
+
+function readYAMLFile(file) {
+	return parseYAML(fs__default["default"].readFileSync(file).toString());
+}
+
+function writeYAMLFile(file, data) {
+	fs__default["default"].writeFileSync(file, stringifyYAML(data));
+}
+
+function readYAML(file, template) {
+	if (template && fs__default["default"].existsSync(file)) {
+		// avoid overriding existing options by prefilling template with actual form data
+		// avoid prefilling static dropdown (with populated options) in case the template has been updated
+		const templateContent = readYAMLFile(template);
+		const content = readYAMLFile(file);
+		templateContent.body.forEach((entry, index) => {
+			if (entry.type !== 'dropdown') return;
+			const {
+				attributes: { options },
+			} = entry;
+			if (
+				!options ||
+				!options.length ||
+				(Array.isArray(options) && options.every((option) => !option))
+			) {
+				templateContent.body[index].attributes.options =
+					content.body[index].attributes.options;
+			}
+		});
+		return templateContent;
+	}
+	return readYAMLFile(template || file);
+}
+
+function writeYAML(file, template, dropdownId, tags) {
+	const content = readYAML(file, template);
 	const found = content.body.find(
 		(entry) => entry.id === dropdownId && entry.type === 'dropdown',
 	);
@@ -6502,12 +6538,13 @@ function writeYAML(file, dropdownId, tags) {
 		);
 	}
 	found.attributes.options = tags;
-	fs__default["default"].writeFileSync(file, jsYaml.dump(content));
+	writeYAMLFile(file, content);
 }
 
 async function run() {
 	try {
 		const form = coreExports.getInput('form', { trimWhitespace: true, required: true });
+		const template = coreExports.getInput('template', { trimWhitespace: true });
 		const dropdownId = coreExports.getInput('dropdown', {
 			trimWhitespace: true,
 			required: true,
@@ -6528,7 +6565,7 @@ async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		writeYAML(form, dropdownId, options);
+		writeYAML(form, template, dropdownId, options);
 	} catch (error) {
 		console.error(error);
 		coreExports.setFailed(error);
