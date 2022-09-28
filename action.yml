@@ -68,5 +68,5 @@ runs:
         git diff --staged --quiet || git commit -m "${{ inputs.commit_message }}"
         response=$(git push --porcelain)
         echo "response=$response" >> $GITHUB_ENV
-        $response
+        echo "mip $response"
       shell: bash
