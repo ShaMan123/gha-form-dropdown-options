@@ -104,7 +104,7 @@ jobs:
         with:
           fetch-depth: 2
           ref: ${{ needs.pre.outputs.branch }}
-      - run: git checkout HEAD^
+      - run: git checkout HEAD^ && git branch --show
       - name: Update branches locally
         uses: ./
         with:
