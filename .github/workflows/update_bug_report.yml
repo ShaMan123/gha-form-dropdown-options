@@ -123,6 +123,7 @@ jobs:
         with:
           dropdown: dates
           options: ${{ needs.pre.outputs.dates }}
+          commit_message: 'chore(): update bug report'
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
