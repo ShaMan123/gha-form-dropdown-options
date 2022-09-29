@@ -59,7 +59,7 @@ Consider handling failures in a consequent step or use the `dry_run` option to p
 
 ## Creating a PR
 
-Consider using [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request) in order to commit changes in an orderly and safe fashion to a generate PR.
+Consider using [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request) in order to commit changes in an orderly and safe fashion to a generated PR.
 
 Refer to the `update-long-report` job in [this workflow](.github/workflows/update_bug_report.yml) to see a usage example and to [PR #5](../../pull/5).\
 Don't forget to use the `dry_run` option.
