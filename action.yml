@@ -54,7 +54,6 @@ runs:
     - name: Update ${{ inputs.form }}
       id: process
       run: |
-        echo "Updating ${{ inputs.form }}"
         node ${{ github.action_path }}/dist/main.cjs
       shell: bash
       env:
@@ -71,15 +70,16 @@ runs:
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
-        PUSHED=false
         if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]]; then
           echo "Form ${{ inputs.form }} has been modified"
           echo "Committing ${{ inputs.form }}"
           git commit -m "${{ inputs.commit_message }}"
           git pull --ff-only
           git push
-          PUSHED=true
+          echo "::set-output name=pushed::true"
+        else
+          echo "Form ${{ inputs.form }} is up to date"
+          echo "::set-output name=pushed::false"
         fi
-        echo "::set-output name=pushed::$PUSHED"
       # https://askubuntu.com/a/29379
       shell: bash
