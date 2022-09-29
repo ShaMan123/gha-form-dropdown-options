@@ -1051,14 +1051,6 @@ body:
         - '#1'
     validations:
       required: true
-  - type: dropdown
-    id: year_end
-    attributes:
-      label: Updating in a PR
-      description: Generated
-      options: !!js/undefined ''
-    validations:
-      required: true
   - type: textarea
     id: steps
     attributes:
