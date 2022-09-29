@@ -1,5 +1,6 @@
 name: 🚀 Update Bug Report
 
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 on:
   # used for testing this action
   # you shouldn't use this trigger in production
