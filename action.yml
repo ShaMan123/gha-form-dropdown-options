@@ -44,6 +44,9 @@ inputs:
 
 # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
+  modified:
+    description: pushed to origin
+    value: ${{ steps.process.outputs.modified }}
   pushed:
     description: pushed to origin
     value: ${{ steps.commit.outputs.pushed || false }}
@@ -55,6 +58,13 @@ runs:
       id: process
       run: |
         node ${{ github.action_path }}/dist/main.cjs
+        if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]]; then
+          echo "Form ${{ inputs.form }} has been modified"
+          echo "::set-output name=modified::true"
+        else
+          echo "Form ${{ inputs.form }} is up to date"
+          echo "::set-output name=modified::false"
+        fi
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
@@ -69,17 +79,14 @@ runs:
       run: |
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
-        git add ${{ inputs.form }}
-        if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]]; then
-          echo "Form ${{ inputs.form }} has been modified"
+        if [[ ${{ steps.process.outputs.modified }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
+          git add ${{ inputs.form }}
           git commit -m "${{ inputs.commit_message }}"
           git pull --ff-only
           git push
           echo "::set-output name=pushed::true"
-        else
-          echo "Form ${{ inputs.form }} is up to date"
+        elses
           echo "::set-output name=pushed::false"
         fi
-      # https://askubuntu.com/a/29379
       shell: bash
