@@ -139,19 +139,23 @@ jobs:
         with:
           ref: ${{ needs.pre.outputs.branch }}
       - name: Update branches without committing
+        id: branches
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: branches
           options: ${{ needs.pre.outputs.branches }}
           dry_run: true
+      - run: echo "Bug report modified? ${{ steps.branches.outputs.modified }}"
       - name: Update labels without committing
+        id: labels
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: labels
           options: ${{ needs.pre.outputs.labels }}
           dry_run: true
+      - run: echo "Bug report modified? ${{ steps.labels.outputs.modified }}"
       - name: Update dates and commit
         id: commit
         uses: ./
@@ -160,7 +164,7 @@ jobs:
           dropdown: dates
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
-      - run: echo "Bug report updated? ${{ steps.commit.outputs.pushed }}"
+      - run: echo "Bug report committed? ${{ steps.commit.outputs.pushed }}"
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
