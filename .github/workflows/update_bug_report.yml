@@ -1,6 +1,7 @@
 name: 🚀 Update Bug Report
 
 # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+# https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads
 on:
   # used for testing this action
   # you shouldn't use this trigger in production
@@ -204,4 +205,6 @@ jobs:
           title: 'ci(): Update year end dropdown'
           body: |
             Automated update to `.github/ISSUE_TEMPLATE/long_report.yml`
-            Uses ![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)
+            Last sha ${{ github.sha }}
+
+            Uses [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request)
