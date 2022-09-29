@@ -68,7 +68,7 @@ runs:
       id: commit
       if: ${{ !fromJSON(inputs.dry_run) }}
       run: |
-        git config user.name Github
+        git config user.name github-actions
         git config user.email noreply@github.com
         git add ${{ inputs.form }}
         UNTRACKED=false
