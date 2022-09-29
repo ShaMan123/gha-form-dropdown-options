@@ -19,6 +19,29 @@ Replace the `uses: ./` directive to point to [![published action](https://img.sh
 
 Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
 
+## Using a Template
+
+The `template` option introduces a _build_ step, sort of speaking.
+
+The action will generate the form as follows:
+
+- Dynamic dropdowns are persisted between action runs in order to enable updating a form from multiple runs.
+- Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart,
+  meaning that you should not edit the built form ever,
+  see an example [commit](https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598).
+
+This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
+It might change to a stricter approach in the future using id prefixing.
+
+Using a `template` is suggested for the following:
+
+- Preserving comments: Parsing the yaml file will loose all comments
+- DX: Maintaining forms with long dropdown options
+
+It is suggested using the template option once, in the first step updating the form, and omitting it afterwards.
+
+Take a look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml).
+
 ## Conflicting Runs
 
 Since workflows run in concurrency you may encounter a case in which a number of runs are trying to modify and commit the same file.\
