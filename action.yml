@@ -46,7 +46,7 @@ inputs:
 outputs:
   pushed:
     description: pushed to origin
-    value: ${{ steps.commit.outputs.pushed || false }}
+    value: ${{ fromJSON(steps.commit.outputs.pushed) }}
 
 runs:
   using: composite
