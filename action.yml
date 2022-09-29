@@ -73,20 +73,22 @@ runs:
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}
         INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
-    - name: Commit
+    - name: Commit & Push
       id: commit
-      if: ${{ !fromJSON(inputs.dry_run) }}
       run: |
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
+        PUSHED=false
         if [[ ${{ steps.process.outputs.modified }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
           git add ${{ inputs.form }}
           git commit -m "${{ inputs.commit_message }}"
-          git pull --ff-only
-          git push
-          echo "::set-output name=pushed::true"
-        else
-          echo "::set-output name=pushed::false"
+          if [[ ${{ !fromJSON(inputs.dry_run) }} == true ]]; then
+            echo "Pushing to upstream"
+            git pull --ff-only
+            git push
+            PUSHED=true
+          fi
         fi
+        echo "::set-output name=pushed::$PUSHED"
       shell: bash
