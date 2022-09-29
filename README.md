@@ -8,7 +8,7 @@ A github action populating options for an [issue forms](https://docs.github.com/
 
 ## Looking for a _Version_ dropdown?
 
-Checkout  [![issue-forms-version-dropdown](https://img.shields.io/github/v/tag/ShaMan123/gha-populate-form-version?label=ShaMan123%2Fgha-populate-form-version%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-version-dropdown)
+Checkout [![issue-forms-version-dropdown](https://img.shields.io/github/v/tag/ShaMan123/gha-populate-form-version?label=ShaMan123%2Fgha-populate-form-version%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-version-dropdown)
 
 ## Configuring
 
@@ -20,4 +20,3 @@ Replace the `uses: ./` directive to point to [![published action ](https://img.s
 This repo uses the action it defines.\
 Take a look at the [issue template](../../issues/new?template=bug_report.yml).\
 Versions have been populated into it using [this workflow](.github/workflows/update_bug_report.yml), see the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
-
