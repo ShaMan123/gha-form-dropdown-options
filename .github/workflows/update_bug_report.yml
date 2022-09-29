@@ -196,6 +196,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4.1.3
         with:
           commit-message: 'chore(): update long report / year_end dropdown'
+          add-paths: .github/ISSUE_TEMPLATE/long_report.yml
           branch: ci-update-long-report
           delete-branch: true
           title: 'ci(): Update year end dropdown'
