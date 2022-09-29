@@ -1,9 +1,10 @@
-# Issue Forms Dropdown Options
+# Issue Forms Dropdown Options 
+
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Dropdown%20Options-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=github)](https://github.com/marketplace/actions/issue-forms-dropdown-options)
+[![Sponsor ShaMan123](https://img.shields.io/badge/Sponsor%20%E2%9D%A4%20-ShaMan123-%E2%9D%A4?logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/ShaMan123)
 
 [![🧪 Test](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/test.yml/badge.svg)](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/test.yml)
 [![🚀 Update Bug Report](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/update_bug_report.yml/badge.svg)](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/update_bug_report.yml)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Issue%20Forms%20Dropdown%20Options-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=github)](https://github.com/marketplace/actions/issue-forms-dropdown-options)
-[![Sponsor ShaMan123](https://img.shields.io/static/v1?label=Sponsor%20ShaMan123&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/ShaMan123)
 
 A github action populating options for an [issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms) dropdown.
 
