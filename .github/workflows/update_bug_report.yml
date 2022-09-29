@@ -109,12 +109,14 @@ jobs:
       - name: Update branches without committing
         uses: ./
         with:
+          form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: branches
           options: ${{ needs.pre.outputs.branches }}
           dry_run: true
       - name: Update labels without committing
         uses: ./
         with:
+          form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: labels
           options: ${{ needs.pre.outputs.labels }}
           dry_run: true
@@ -122,6 +124,7 @@ jobs:
         id: commit
         uses: ./
         with:
+          form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: dates
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
