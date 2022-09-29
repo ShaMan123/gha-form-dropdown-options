@@ -1,13 +1,9 @@
 import fs from 'fs';
 import { DEFAULT_SCHEMA, types, dump, load } from 'js-yaml';
 
-// https://github.com/rollup/plugins/issues/1275
-// https://github.com/nodeca/js-yaml-js-types/issues/4
-// import undef from 'js-yaml-js-types/undefined';
-import { undef } from './undef.js';
-
+// configure null to be stringified to ''
 types.null.defaultStyle = 'empty';
-const schema = DEFAULT_SCHEMA.extend([undef, types.null]);
+const schema = DEFAULT_SCHEMA;
 
 export function parseYAML(input) {
 	return load(input, { schema });
