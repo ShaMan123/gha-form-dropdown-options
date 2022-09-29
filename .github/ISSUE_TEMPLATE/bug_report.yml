@@ -35,7 +35,6 @@ body:
         - bot
         - bug
         - ci
-        - documentation
         - duplicate
         - enhancement
         - good first issue
