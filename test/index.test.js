@@ -74,6 +74,24 @@ describe('action', function () {
 		);
 	});
 
+	it.skip('TODO: keeps comments', async function () {
+		try {
+			cp.execSync(
+				'git diff --no-index test/template.yml test/expected.yml -w -b -B -I ^s*- -R  --src-prefix ./ --dst-prefix ./ > test/diff.txt',
+				{
+					cwd: path.resolve(__dirname, '..'),
+				},
+			).toString();
+		} catch (error) {
+			// fails for some reason but manages to create the diff
+		}
+		const diff = fs
+			.readFileSync(path.resolve(__dirname, 'diff.txt'))
+			.toString();
+		fs.unlinkSync(path.resolve(__dirname, 'diff.txt'));
+		assert.equal(diff, '', 'diff should be empty');
+	});
+
 	it('using a template', async function () {
 		fs.unlinkSync(test);
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
