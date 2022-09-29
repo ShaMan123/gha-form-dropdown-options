@@ -7,7 +7,7 @@ import { DEFAULT_SCHEMA, types, dump, load } from 'js-yaml';
 import { undef } from './undef.js';
 
 types.null.defaultStyle = 'empty';
-const schema = DEFAULT_SCHEMA.extend([undef, types.null]);
+const schema = DEFAULT_SCHEMA; //.extend([types.null]);
 
 export function parseYAML(input) {
 	return load(input, { schema });
