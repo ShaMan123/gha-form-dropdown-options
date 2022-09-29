@@ -1,5 +1,6 @@
 name: 🚀 Update Bug Report
 
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
 on:
   # used for testing this action
   # you shouldn't use this trigger in production
@@ -12,10 +13,17 @@ on:
   pull_request:
     branches: [main]
 
+  # specific to this workflow
+  create:
+  delete:
+  label:
+    types: [created, edited, deleted]
+
   # use in production
   workflow_dispatch:
 
   # use in production
+  # needs ref setup
   release:
     branches:
       - main
@@ -32,34 +40,32 @@ jobs:
     name: Prepare context for other jobs
     runs-on: ubuntu-latest
     outputs:
-      branch: ${{ steps.branch.outputs.result }}
+      # needed in order to reference the local action
+      branch: ${{ env.job_ref }}
       branches: ${{ steps.branches.outputs.result }}
       labels: ${{ steps.labels.outputs.result }}
       long: ${{ steps.long.outputs.result }}
       long2: ${{ steps.long2.outputs.result }}
+      dates: ${{ steps.dates.outputs.result }}
     steps:
-      - name: 'TEST: Get branch for job'
-        # used for testing this action, needed in order to reference the local action
-        id: branch
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            switch ('${{ github.event_name }}') {
-              case 'pull_request':
-                return '${{ github.head_ref }}';
-              case 'release':
-                return '${{ github.event.repository.default_branch }}';
-              default:
-                return '${{ github.ref }}';
-            }
+      - name: Setting branch for committing
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
+        run: |
+          BRANCH=${{ github.ref }}
+          if [ ${{ github.event_name }} = release || ${{ github.event_name }} = create ]; then
+            BRANCH=${{ github.event.repository.default_branch }}
+          elif [ ${{ github.event_name == 'pull_request' }} ]; then
+            BRANCH=${{ github.head_ref }}
+          fi
+          echo "job_ref=$BRANCH" >> $GITHUB_ENV
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
         uses: actions/github-script@v6
         with:
           result-encoding: string
+          # https://octokit.github.io/rest.js
+          # https://docs.github.com/en/rest/branches/branches#list-branches
           script: |
             return github
               .rest.repos.listBranches(context.repo)
@@ -69,6 +75,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           result-encoding: string
+          # https://octokit.github.io/rest.js
+          # https://docs.github.com/en/rest/issues/labels#list-labels-for-a-repository
           script: |
             return github
               .rest.issues.listLabelsForRepo(context.repo)
@@ -87,42 +95,6 @@ jobs:
           result-encoding: string
           script: |
             return new Array(500).fill(0).map((_, i) => `#${i + 1}`).reverse();
-  update-bug-report-main:
-    name: Update bug report on `main`
-    runs-on: ubuntu-latest
-    needs: pre
-    steps:
-      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
-        # used for testing this action, needed in order to reference the local action
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ needs.pre.outputs.branch }}
-      - name: Update branches
-        uses: ./
-        with:
-          dropdown: branches
-          options: ${{ needs.pre.outputs.branches }}
-          commit_message: 'chore(): update bug report branches'
-          # This option will checkout the local branch to `main`
-          # Any consequent steps will run in the same context
-          # That is why we isolate it in a separate job
-          ref: main
-  update-bug-report:
-    name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
-    runs-on: ubuntu-latest
-    needs: pre
-    steps:
-      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
-        # used for testing this action, needed in order to reference the local action
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ needs.pre.outputs.branch }}
-      - name: Update labels
-        uses: ./
-        with:
-          dropdown: labels
-          options: ${{ needs.pre.outputs.labels }}
-          commit_message: 'chore(): update bug report labels'
       - name: Get next week
         id: dates
         uses: actions/github-script@v6
@@ -137,21 +109,43 @@ jobs:
               }`;
             }
             return new Array(7).fill(0).map((_, i) => format(i + 7));
-      - name: Update dates
-        id: update_dates
+  update-bug-report:
+    name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
+    runs-on: ubuntu-latest
+    needs: pre
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.pre.outputs.branch }}
+      - name: Update branches without committing
         uses: ./
         with:
+          form: .github/ISSUE_TEMPLATE/bug_report.yml
+          dropdown: branches
+          options: ${{ needs.pre.outputs.branches }}
+          dry_run: true
+      - name: Update labels without committing
+        uses: ./
+        with:
+          form: .github/ISSUE_TEMPLATE/bug_report.yml
+          dropdown: labels
+          options: ${{ needs.pre.outputs.labels }}
+          dry_run: true
+      - name: Update dates and commit
+        id: commit
+        uses: ./
+        with:
+          form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: dates
-          options: ${{ steps.dates.outputs.result }}
-          commit_message: 'chore(): update bug report dates'
+          options: ${{ needs.pre.outputs.dates }}
+          commit_message: 'chore(): update bug report'
+      - run: echo "Bug report updated? ${{ steps.commit.outputs.pushed }}"
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      - name: 'TEST: Checkout ${{ needs.pre.outputs.branch }}'
-        # used for testing this action, needed in order to reference the local action
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
       - name: Update long dropdown
@@ -165,6 +159,7 @@ jobs:
       - name: Update long2 dropdown
         uses: ./
         with:
+          # passing template again for testing
           template: .github/template_report.yml
           form: .github/ISSUE_TEMPLATE/long_report.yml
           dropdown: long2

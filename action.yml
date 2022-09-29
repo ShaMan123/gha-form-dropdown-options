@@ -4,13 +4,11 @@ author: ShaMan123
 branding:
   icon: list
   color: purple
+
 inputs:
   github_token:
     description: Github token
     default: ${{ github.token }}
-  ref:
-    description: Github ref/branch to update, inferred from the event type if omitted
-    type: string
   template:
     description: |
       The location of the template file used to build the form, useful for ease of maintenance.
@@ -21,49 +19,40 @@ inputs:
       see https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598.
 
       This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
+      It might change to a stricter approach in the future using id prefixing.
+      It is suggested using the template option once in the first step updating the form and omitting it afterwards.
     type: string
   form:
     description: The location of the yaml form file
-    default: '.github/ISSUE_TEMPLATE/bug_report.yml'
     type: string
+    required: true
   dropdown:
     description: The id of the dropdown in the yaml form to populate options into
     type: string
+    required: true
   options:
     description: A stringified array of options
     type: string
+    required: true
   commit_message:
     type: string
+    required: true
   dry_run:
     description: When set to `true` will not commit the modified yaml form
     default: false
     type: boolean
+
+# https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
-  ref:
-    description: Github ref/branch checked out and updated by the action
-    value: ${{ env.job_ref }}
+  pushed:
+    description: pushed to origin
+    value: ${{ steps.commit.outputs.pushed || false }}
+
 runs:
   using: composite
   steps:
-    # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
-    - run: echo "Setting branch for action"
-      shell: bash
-    - run: echo "job_ref=${{ github.ref }}" >> $GITHUB_ENV
-      shell: bash
-    - run: echo "job_ref=${{ github.head_ref }}" >> $GITHUB_ENV
-      if: ${{ github.event_name == 'pull_request' }}
-      shell: bash
-    - run: echo "job_ref=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
-      if: ${{ github.event_name == 'release' }}
-      shell: bash
-    - run: echo "job_ref=${{ inputs.ref }}" >> $GITHUB_ENV
-      if: ${{ inputs.ref }}
-      shell: bash
-    - uses: actions/checkout@v3
-      with:
-        ref: ${{ env.job_ref }}
     - name: Update ${{ inputs.form }}
-      id: main
+      id: process
       run: |
         echo "Updating ${{ inputs.form }}"
         node ${{ github.action_path }}/dist/main.cjs
@@ -75,14 +64,21 @@ runs:
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}
         INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
-    - name: Commit to ${{ env.job_ref }}
+    - name: Commit
+      id: commit
       if: ${{ !fromJSON(inputs.dry_run) }}
       run: |
-        echo "Committing ${{ inputs.form }} to ${{ env.job_ref }}"
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         git add ${{ inputs.form }}
-        git diff --staged --quiet || git commit -m "${{ inputs.commit_message }}"
-        git pull
-        git push
+        UNTRACKED=false
+        git diff --staged --quiet || UNTRACKED=true
+        if [ $UNTRACKED = true ]; then
+          echo "Form ${{ inputs.form }} has been updated"
+          echo "Committing ${{ inputs.form }}"
+          git commit -m "${{ inputs.commit_message }}"
+          git push
+        fi
+        echo "::set-output name=pushed::$UNTRACKED"
+      # https://askubuntu.com/a/29379
       shell: bash
