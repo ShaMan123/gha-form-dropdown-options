@@ -202,4 +202,6 @@ jobs:
           branch: ci-update-long-report
           delete-branch: true
           title: 'ci(): Update year end dropdown'
-          body: 'Automated updated'
+          body: |
+            Automated update to `.github/ISSUE_TEMPLATE/long_report.yml`
+            Uses ![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)
