@@ -17,7 +17,7 @@ on:
   create:
   delete:
   label:
-    types: [created, deleted]
+    types: [created, edited, deleted]
 
   # use in production
   workflow_dispatch:
