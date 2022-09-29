@@ -20,7 +20,9 @@ body:
       label: Repository Branches
       description: Fetched by action
       options:
+        - cherry-pick
         - main
+        - pr-action
     validations:
       required: true
   - type: dropdown
