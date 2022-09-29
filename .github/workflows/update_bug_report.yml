@@ -199,6 +199,7 @@ jobs:
           commit-message: 'chore(): update long report / year_end dropdown'
           add-paths: .github/ISSUE_TEMPLATE/long_report.yml
           branch: ci-update-long-report
+          base: ${{ needs.pre.outputs.branch }}
           delete-branch: true
           labels: ci, bot
           title: 'ci(`Automated`): Update year end dropdown'
