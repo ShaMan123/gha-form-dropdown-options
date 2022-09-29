@@ -32,7 +32,7 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        - bug1
+        - bug
         - documentation
         - duplicate
         - enhancement
