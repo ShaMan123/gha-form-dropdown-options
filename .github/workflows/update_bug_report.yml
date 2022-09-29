@@ -64,6 +64,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           result-encoding: string
+          # https://octokit.github.io/rest.js
+          # https://docs.github.com/en/rest/branches/branches#list-branches
           script: |
             return github
               .rest.repos.listBranches(context.repo)
@@ -73,6 +75,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           result-encoding: string
+          # https://octokit.github.io/rest.js
+          # https://docs.github.com/en/rest/issues/labels#list-labels-for-a-repository
           script: |
             return github
               .rest.issues.listLabelsForRepo(context.repo)
@@ -155,7 +159,7 @@ jobs:
       - name: Update long2 dropdown
         uses: ./
         with:
-          # Passing template again for testing
+          # passing template again for testing
           template: .github/template_report.yml
           form: .github/ISSUE_TEMPLATE/long_report.yml
           dropdown: long2
