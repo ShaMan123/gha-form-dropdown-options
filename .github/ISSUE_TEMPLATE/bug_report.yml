@@ -31,7 +31,7 @@ body:
       description: Fetched by action
       options:
         - bug
-        - concurrent_test
+        - concurrent_test3
         - documentation
         - duplicate
         - enhancement
