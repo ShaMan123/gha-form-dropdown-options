@@ -2,7 +2,7 @@
 
 [![🧪 Test](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/test.yml/badge.svg)](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/test.yml)
 [![🚀 Update Bug Report](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/update_bug_report.yml/badge.svg)](https://github.com/ShaMan123/gha-form-dropdown-options/actions/workflows/update_bug_report.yml)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Issue%20Forms%20Dropdown%20Options-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=github)]
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Issue%20Forms%20Dropdown%20Options-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=github)](https://github.com/marketplace/actions/issue-forms-dropdown-options)
 [![Sponsor ShaMan123](https://img.shields.io/static/v1?label=Sponsor%20ShaMan123&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/ShaMan123)
 
 A github action populating options for an [issue forms](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms) dropdown.
@@ -14,7 +14,7 @@ Checkout [![issue-forms-version-dropdown](https://img.shields.io/github/v/tag/Sh
 ## Configuring
 
 Follow [this workflow](.github/workflows/update_bug_report.yml).\
-Replace the `uses: ./` directive to point to [![published action ](https://img.shields.io/github/v/tag/ShaMan123/gha-form-dropdown-options?label=ShaMan123%2Fgha-form-dropdown-options%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-dropdown-options).
+Replace the `uses: ./` directive to point to [![published action](https://img.shields.io/github/v/tag/ShaMan123/gha-form-dropdown-options?label=ShaMan123%2Fgha-form-dropdown-options%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-dropdown-options).
 
 Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
 
