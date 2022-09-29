@@ -46,7 +46,7 @@ function readYAML(file, template) {
 	return readYAMLFile(template || file);
 }
 
-export function writeYAML(file, template, dropdownId, tags) {
+export function writeYAML(file, template, dropdownId, options) {
 	const content = readYAML(file, template);
 	const found = content.body.find(
 		(entry) => entry.id === dropdownId && entry.type === 'dropdown',
@@ -58,7 +58,7 @@ export function writeYAML(file, template, dropdownId, tags) {
 			)}`,
 		);
 	}
-	found.attributes.options = tags;
+	found.attributes.options = options;
 	let out = stringifyYAML(content);
 	if (template) {
 		const HEADER = `
