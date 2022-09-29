@@ -207,4 +207,5 @@ jobs:
             Automated update to `.github/ISSUE_TEMPLATE/long_report.yml`
             Last sha ${{ github.sha }}
 
-            Uses [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request)
+            Created with
+            [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request)
