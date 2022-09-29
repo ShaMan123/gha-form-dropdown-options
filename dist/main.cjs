@@ -6430,9 +6430,6 @@ var dump_1 = dump$1;
 var dumper = {
 	dump: dump_1
 };
-
-
-var Type                = type;
 var DEFAULT_SCHEMA      = _default;
 var load                = loader.load;
 var dump                = dumper.dump;
@@ -6454,35 +6451,9 @@ var types = {
   str:       str
 };
 
-/**
- * source: https://github.com/nodeca/js-yaml-js-types/blob/master/undefined.js
- * https://github.com/rollup/plugins/issues/1275
- * https://github.com/nodeca/js-yaml-js-types/issues/4
- */
-
-function resolveJavascriptUndefined() {
-	return true;
-}
-function constructJavascriptUndefined() {
-	/*eslint-disable no-undefined*/
-	return undefined;
-}
-function representJavascriptUndefined() {
-	return '';
-}
-function isUndefined(object) {
-	return typeof object === 'undefined';
-}
-new Type('tag:yaml.org,2002:js/undefined', {
-	kind: 'scalar',
-	resolve: resolveJavascriptUndefined,
-	construct: constructJavascriptUndefined,
-	predicate: isUndefined,
-	represent: representJavascriptUndefined,
-});
-
+// configure null to be stringified to ''
 types.null.defaultStyle = 'empty';
-const schema = DEFAULT_SCHEMA; //.extend([types.null]);
+const schema = DEFAULT_SCHEMA;
 
 function parseYAML(input) {
 	return load(input, { schema });
