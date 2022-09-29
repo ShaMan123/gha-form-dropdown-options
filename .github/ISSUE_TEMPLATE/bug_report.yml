@@ -22,7 +22,6 @@ body:
       options:
         - b
         - main
-        - no-checkout
     validations:
       required: true
   - type: dropdown
@@ -31,6 +30,7 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
+        - aabx
         - bug
         - documentation
         - duplicate
@@ -39,7 +39,6 @@ body:
         - help wanted
         - invalid
         - question
-        - test_workflow__
         - wontfix
     validations:
       required: true
