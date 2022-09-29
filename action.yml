@@ -77,6 +77,7 @@ runs:
           echo "Form ${{ inputs.form }} has been updated"
           echo "Committing ${{ inputs.form }}"
           git commit -m "${{ inputs.commit_message }}"
+          git pull
           git push
         fi
         echo "::set-output name=pushed::$UNTRACKED"
