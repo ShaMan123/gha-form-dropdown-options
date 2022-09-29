@@ -70,7 +70,6 @@ runs:
       run: |
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
-        git config pull.rebase true
         git add ${{ inputs.form }}
         UNTRACKED=false
         git diff --staged --quiet || UNTRACKED=true
@@ -78,8 +77,6 @@ runs:
           echo "Form ${{ inputs.form }} has been updated"
           echo "Committing ${{ inputs.form }}"
           git commit -m "${{ inputs.commit_message }}"
-          git fetch
-          git rebase --reapply-cherry-picks
           git push
         fi
         echo "::set-output name=pushed::$UNTRACKED"
