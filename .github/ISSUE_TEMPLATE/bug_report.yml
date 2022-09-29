@@ -31,10 +31,10 @@ body:
       description: Fetched by action
       options:
         - bug
+        - concurrent_test
         - documentation
         - duplicate
         - enhancement
-        - gconcurrent_tes
         - good first issue
         - help wanted
         - invalid
