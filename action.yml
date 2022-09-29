@@ -86,7 +86,7 @@ runs:
           git pull --ff-only
           git push
           echo "::set-output name=pushed::true"
-        elses
+        else
           echo "::set-output name=pushed::false"
         fi
       shell: bash
