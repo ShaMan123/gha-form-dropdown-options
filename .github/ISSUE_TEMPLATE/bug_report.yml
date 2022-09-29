@@ -30,7 +30,7 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        - aabx
+        - aabxd
         - bug
         - documentation
         - duplicate
