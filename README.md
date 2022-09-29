@@ -15,8 +15,23 @@ Checkout [![issue-forms-version-dropdown](https://img.shields.io/github/v/tag/Sh
 Follow [this workflow](.github/workflows/update_bug_report.yml).\
 Replace the `uses: ./` directive to point to [![published action ](https://img.shields.io/github/v/tag/ShaMan123/gha-form-dropdown-options?label=ShaMan123%2Fgha-form-dropdown-options%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-dropdown-options).
 
+Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
+
+## Conflicting Runs
+
+Since workflows run in concurrency you may encounter a case in which a number of runs are trying to modify and commit the same file.\
+This might result in a merge conflict.\
+If that is the case the action will fail.
+
+_Consider the following:_\
+The labels of this repo are populated into a dropdown (see [Live](#live)).\
+Modifying a label more than once in a short period of time (before the previous runs completed) will fail to update the form.
+
+Consider handling failures in a consequent step or use the `dry_run` option to prevent the action from trying to commit in the first place and handle that yourself.
+
 ## Live
 
-This repo uses the action it defines.\
-Take a look at the [issue template](../../issues/new?template=bug_report.yml).\
-Versions have been populated into it using [this workflow](.github/workflows/update_bug_report.yml), see the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
+This repo uses the action it defines 🚀.\
+Take a look at the dropdowns populated into the [issue template](../../issues/new?template=bug_report.yml) using [this workflow](.github/workflows/update_bug_report.yml).
+
+See the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
