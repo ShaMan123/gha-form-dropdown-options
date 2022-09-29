@@ -41,8 +41,8 @@ jobs:
       long2: ${{ steps.long2.outputs.result }}
       dates: ${{ steps.dates.outputs.result }}
     steps:
-      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
       - name: Setting branch for committing
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
         run: |
           BRANCH=${{ github.ref }}
           if [ ${{ github.event_name }} = release ]; then
@@ -106,13 +106,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
-      - name: Update branches locally
+      - name: Update branches without committing
         uses: ./
         with:
           dropdown: branches
           options: ${{ needs.pre.outputs.branches }}
           dry_run: true
-      - name: Update labels locally
+      - name: Update labels without committing
         uses: ./
         with:
           dropdown: labels
@@ -145,6 +145,7 @@ jobs:
       - name: Update long2 dropdown
         uses: ./
         with:
+          # Passing template again for testing
           template: .github/template_report.yml
           form: .github/ISSUE_TEMPLATE/long_report.yml
           dropdown: long2

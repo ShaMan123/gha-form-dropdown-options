@@ -19,6 +19,7 @@ inputs:
       see https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598.
 
       This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
+      It might change to a stricter approach in the future using id prefixing.
     type: string
   form:
     description: The location of the yaml form file
@@ -41,7 +42,7 @@ inputs:
 outputs:
   pushed:
     description: pushed to origin
-    value: ${{ steps.commit.outputs.pushed  }}
+    value: ${{ steps.commit.outputs.pushed || false }}
 
 runs:
   using: composite
