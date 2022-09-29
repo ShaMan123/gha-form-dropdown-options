@@ -28,11 +28,14 @@ inputs:
   dropdown:
     description: The id of the dropdown in the yaml form to populate options into
     type: string
+    required: true
   options:
     description: A stringified array of options
     type: string
+    required: true
   commit_message:
     type: string
+    required: true
   dry_run:
     description: When set to `true` will not commit the modified yaml form
     default: false
