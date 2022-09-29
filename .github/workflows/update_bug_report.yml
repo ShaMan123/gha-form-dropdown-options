@@ -205,6 +205,7 @@ jobs:
           form: .github/ISSUE_TEMPLATE/long_report.yml
           dropdown: year_end
           options: ${{ needs.pre.outputs.year_end }}
+          commit_message: 'chore(): update long report / year_end dropdown'
           dry_run: true
       - name: Commit & PR
         uses: peter-evans/create-pull-request@v4.1.3
