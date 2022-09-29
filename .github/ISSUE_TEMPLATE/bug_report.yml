@@ -30,11 +30,11 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        - aabx
         - bug
         - documentation
         - duplicate
         - enhancement
+        - gconcurrent_tes
         - good first issue
         - help wanted
         - invalid
