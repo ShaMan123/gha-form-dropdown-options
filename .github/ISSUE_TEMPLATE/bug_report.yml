@@ -21,6 +21,7 @@ body:
       description: Fetched by action
       options:
         - cherry-pick
+        - ci-update-long-report
         - main
         - pr-action
     validations:
