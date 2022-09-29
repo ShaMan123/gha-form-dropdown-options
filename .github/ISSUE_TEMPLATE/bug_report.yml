@@ -39,7 +39,6 @@ body:
         - help wanted
         - invalid
         - question
-        - test_workflow__
         - wontfix
     validations:
       required: true
