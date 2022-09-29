@@ -47,6 +47,7 @@ jobs:
       long: ${{ steps.long.outputs.result }}
       long2: ${{ steps.long2.outputs.result }}
       dates: ${{ steps.dates.outputs.result }}
+      year_end: ${{ steps.year_end.outputs.result }}
     steps:
       - name: Setting branch for committing
         # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
@@ -102,13 +103,28 @@ jobs:
           # unfortunately I didn't manage to import moment
           # https://github.com/actions/github-script/issues/275
           script: |
+            const dayMs = 24 * 60 * 60 * 1000;
             function format(dayDiff) {
-              const date = new Date(Date.now() + dayDiff * 24 * 60 * 60 * 1000);
+              const date = new Date(Date.now() + dayDiff * dayMs);
               return `${date.getFullYear()}-${date.getMonth() + 1}-${
                 date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
               }`;
             }
             return new Array(7).fill(0).map((_, i) => format(i + 7));
+      - name: Get dates until end of year
+        id: year_end
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const dayMs = 24 * 60 * 60 * 1000;
+            function format(dayDiff) {
+              const date = new Date(Date.now() + dayDiff * dayMs);
+              return `${date.getFullYear()}-${date.getMonth() + 1}-${
+                date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+              }`;
+            }
+            const jan1 = new Date(new Date().getFullYear() + 1, 0, 1)
+            return new Array(Math.floor((jan1 - new Date()) / dayMs)).fill(0).map((_, i) => format(i + 1));
   update-bug-report:
     name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
@@ -165,3 +181,20 @@ jobs:
           dropdown: long2
           options: ${{ needs.pre.outputs.long2 }}
           commit_message: 'chore(): update long report / long2 dropdown'
+      - name: Update year end dropdown
+        uses: ./
+        with:
+          # passing template again for testing
+          template: .github/template_report.yml
+          form: .github/ISSUE_TEMPLATE/long_report.yml
+          dropdown: year_end
+          options: ${{ needs.pre.outputs.year_end }}
+          dry_run: true
+      - name: Commit & PR
+        uses: peter-evans/create-pull-request@v4.1.3
+        with:
+          commit-message: ${{ inputs.commit_message }}
+          branch: ci-update-long-report
+          delete-branch: true
+          title: 'ci(): Update year end dropdown'
+          body: 'Automated updated'
