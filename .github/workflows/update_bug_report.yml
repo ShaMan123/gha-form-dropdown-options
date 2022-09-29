@@ -147,7 +147,8 @@ jobs:
           options: ${{ needs.pre.outputs.branches }}
           dry_run: true
       - name: Bug report modified? ${{ steps.branches.outputs.modified }}
-        run:
+        run: |
+
       - name: Update labels without committing
         id: labels
         uses: ./
@@ -157,7 +158,8 @@ jobs:
           options: ${{ needs.pre.outputs.labels }}
           dry_run: true
       - name: Bug report modified? ${{ steps.labels.outputs.modified }}
-        run:
+        run: |
+
       - name: Update dates and commit
         id: commit
         uses: ./
@@ -167,7 +169,8 @@ jobs:
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
       - name: Bug report committed? ${{ steps.commit.outputs.pushed }}
-        run:
+        run: |
+
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
