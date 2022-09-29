@@ -20,6 +20,7 @@ inputs:
 
       This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
       It might change to a stricter approach in the future using id prefixing.
+      It is suggested using the template option once in the first step updating the form and omitting it afterwards.
     type: string
   form:
     description: The location of the yaml form file
