@@ -1,6 +1,7 @@
 name: 🧪 Test Form
 title: 🧪 Test Form
 body:
+  # a comment
   - type: dropdown
     id: version
     attributes:
