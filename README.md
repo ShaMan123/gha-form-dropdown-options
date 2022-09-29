@@ -1,4 +1,4 @@
-# Issue Forms Dropdown Options 
+# Issue Forms Dropdown Options
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Dropdown%20Options-blue.svg?colorA=24292e&colorB=0366d6&style=flat&longCache=true&logo=github)](https://github.com/marketplace/actions/issue-forms-dropdown-options)
 [![Sponsor ShaMan123](https://img.shields.io/badge/Sponsor%20%E2%9D%A4%20-ShaMan123-%E2%9D%A4?logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/ShaMan123)
@@ -30,6 +30,10 @@ The labels of this repo are populated into a dropdown (see [Live](#live)).\
 Modifying a label more than once in a short period of time (before the previous runs completed) will fail to update the form.
 
 Consider handling failures in a consequent step or use the `dry_run` option to prevent the action from trying to commit in the first place and handle that yourself.
+
+## Creating a PR
+
+Consider using [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request) in order to commit changes in an orderly and safe fashion to a generate PR.
 
 ## Live
 
