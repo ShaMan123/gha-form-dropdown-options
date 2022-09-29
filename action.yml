@@ -38,7 +38,7 @@ inputs:
     type: string
     required: true
   dry_run:
-    description: When set to `true` will not commit the modified yaml form
+    description: When set to `true` will not push the committed yaml form
     default: false
     type: boolean
 
