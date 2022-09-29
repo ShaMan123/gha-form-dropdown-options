@@ -20,6 +20,7 @@ body:
       label: Repository Branches
       description: Fetched by action
       options:
+        - bash
         - ci-update-long-report
         - main
         - safeguard
