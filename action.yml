@@ -73,7 +73,7 @@ runs:
         git add ${{ inputs.form }}
         UNTRACKED=false
         git diff --staged --quiet || UNTRACKED=true
-        if [ $UNTRACKED = true ]; then
+        if [ $UNTRACKED ]; then
           echo "Form ${{ inputs.form }} has been updated"
           echo "Committing ${{ inputs.form }}"
           git commit -m "${{ inputs.commit_message }}"
