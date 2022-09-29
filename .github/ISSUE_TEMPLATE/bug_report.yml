@@ -23,7 +23,6 @@ body:
         - cherry-pick
         - ci-update-long-report
         - main
-        - pr-action
     validations:
       required: true
   - type: dropdown
