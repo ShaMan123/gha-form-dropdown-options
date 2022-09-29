@@ -40,7 +40,7 @@ jobs:
     name: Prepare context for other jobs
     runs-on: ubuntu-latest
     outputs:
-      # used for testing this action, needed in order to reference the local action
+      # needed in order to reference the local action
       branch: ${{ env.job_ref }}
       branches: ${{ steps.branches.outputs.result }}
       labels: ${{ steps.labels.outputs.result }}
