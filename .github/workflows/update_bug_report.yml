@@ -200,7 +200,8 @@ jobs:
           add-paths: .github/ISSUE_TEMPLATE/long_report.yml
           branch: ci-update-long-report
           delete-branch: true
-          title: 'ci(): Update year end dropdown'
+          labels: ci, bot
+          title: 'ci(`Automated`): Update year end dropdown'
           body: |
             Automated update to `.github/ISSUE_TEMPLATE/long_report.yml`
             Last sha ${{ github.sha }}
