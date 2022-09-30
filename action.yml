@@ -94,7 +94,7 @@ runs:
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         PUSHED=false
-        if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true]]; then
+        if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
           git add ${{ inputs.form }}
           MSG='${{ inputs.commit_message }}'
