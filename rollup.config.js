@@ -8,18 +8,19 @@ export default {
 	output: {
 		file: 'dist/main.cjs',
 		format: 'cjs',
+		sourcemap: !process.env.CI
 	},
 	treeshake: true,
 	plugins: [
 		externals({
 			builtin: true,
-			deps: false,
+			deps: false
 		}),
 		resolve({
 			preferBuiltins: true,
-			mainFields: ['main'],
+			mainFields: ['main']
 		}),
 		commonjs(),
-		json(),
-	],
+		json()
+	]
 };

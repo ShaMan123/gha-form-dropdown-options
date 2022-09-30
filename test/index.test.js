@@ -33,7 +33,7 @@ function assertForm(
 	message = 'output should match'
 ) {
 	const stdout = cp
-		.execSync('node dist/main.cjs', {
+		.execSync('node --require source-map-support/register dist/main.cjs', {
 			env: { ...process.env, ...parseInputs(inputs) }
 		})
 		.toString();
@@ -56,6 +56,7 @@ describe('action', function () {
 	const template = path.resolve(__dirname, 'template.yml');
 	const test = path.resolve(__dirname, 'temp.yml');
 	this.timeout(5000);
+	let preserveTemp = false;
 	this.beforeAll(() => {
 		// https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 		dotenv.config();
@@ -69,8 +70,11 @@ describe('action', function () {
 		);
 	});
 	this.afterEach(() => {
-		fs.unlinkSync(test);
-		assert.ok(!fs.existsSync(test), 'should cleanup test');
+		if (!preserveTemp) {
+			fs.unlinkSync(test);
+			assert.ok(!fs.existsSync(test), 'should cleanup test');
+		}
+		preserveTemp = false;
 	});
 
 	it('passing options', async function () {
@@ -118,6 +122,7 @@ describe('action', function () {
 	});
 
 	it('using a template', async function () {
+		// preserveTemp = true;
 		fs.unlinkSync(test);
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
@@ -126,6 +131,7 @@ describe('action', function () {
 				form: test,
 				dropdown: 'version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
+				// description: `\${...}\nUpdated: ${new Date().toISOString()}`
 			},
 			test,
 			expected
