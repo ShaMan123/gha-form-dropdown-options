@@ -53,7 +53,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: subs
+    id: $subs
     attributes:
       label: Recursive
       description: Uses [Dynamic Substitution]()

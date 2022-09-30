@@ -217,7 +217,7 @@ jobs:
           # passing template again for testing
           template: .github/template_report.yml
           form: .github/ISSUE_TEMPLATE/long_report.yml
-          dropdown: subs
+          dropdown: $subs
           options: '{{...}},${{ needs.pre.outputs.timestamp }}'
           description: '{...}\nUpdated ${{ needs.pre.outputs.timestamp }}'
           commit_message: 'chore(): update long report / timestamp'
