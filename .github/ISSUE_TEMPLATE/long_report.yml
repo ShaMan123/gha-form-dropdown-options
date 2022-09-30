@@ -1159,13 +1159,15 @@ body:
       label: Recursive
       description: >-
         Uses [Dynamic
-        Substitution](https://github.com/ShaMan123/gha-form-dropdown-options#dynamic-substitution)
+        Substitution](https://github.com/ShaMan123/gha-form-dropdown-options#dynamic-substitution)\nUpdated
+        2022-09-30 19:26:14
       options:
         - 2022-09-27T00:00:00.000Z
         - 2022-09-28T00:00:00.000Z
         - 2022-09-29T00:00:00.000Z
         - 2022-09-30T00:00:00.000Z
         - 2022-10-01T00:00:00.000Z
+        - '2022-09-30 19:26:14'
     validations:
       required: true
   - type: textarea
