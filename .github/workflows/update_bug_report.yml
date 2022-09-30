@@ -147,7 +147,7 @@ jobs:
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
-          dropdown: branches
+          dropdown: $branches
           options: ${{ needs.pre.outputs.branches }}
           dry_run: no-push
       - name: Bug report modified? ${{ steps.branches.outputs.modified }}
@@ -158,7 +158,7 @@ jobs:
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
-          dropdown: labels
+          dropdown: $labels
           options: ${{ needs.pre.outputs.labels }}
           dry_run: no-push
       - name: Bug report modified? ${{ steps.labels.outputs.modified }}
@@ -169,7 +169,7 @@ jobs:
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
-          dropdown: dates
+          dropdown: $dates
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
       - name: Pushed? ${{ steps.commit.outputs.pushed }}
