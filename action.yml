@@ -74,7 +74,7 @@ runs:
       id: process
       run: |
         node ${{ github.action_path }}/dist/main.cjs
-        if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]] then
+        if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]]; then
           echo "Form ${{ inputs.form }} has been modified"
           echo "::set-output name=modified::true"
         else
@@ -94,15 +94,15 @@ runs:
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         PUSHED=false
-        if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true ]] then
+        if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true]]; then
           echo "Committing ${{ inputs.form }}"
           git add ${{ inputs.form }}
           MSG='${{ inputs.commit_message }}'
-          if [[ $MSG == '' ]] then
+          if [[ $MSG == '' ]]; then
             MSG='chore(): update ${{ fromJSON(steps.process.outputs.form).name }}'
           fi
           git commit -m "$MSG"
-          if [[ ${{ inputs.dry_run != 'no-push' }} == true ]] then
+          if [[ ${{ inputs.dry_run != 'no-push' }} == true ]]; then
             echo "Pushing to upstream"
             git pull --ff-only
             git push
