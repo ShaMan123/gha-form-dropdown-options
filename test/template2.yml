@@ -8,7 +8,8 @@ body:
       description: Package version
       label: version
       options:
-        -
+        - x
+        - x1
     validations:
       required: true
   - type: dropdown
