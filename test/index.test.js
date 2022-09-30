@@ -22,7 +22,7 @@ function assertYAMLIsEqual(actualPath, expectedPath, message) {
 	assert.deepStrictEqual(
 		readYAMLFile(actualPath),
 		readYAMLFile(expectedPath),
-		message,
+		message
 	);
 }
 
@@ -30,13 +30,25 @@ function assertForm(
 	inputs,
 	actualPath,
 	expectedPath,
-	message = 'output should match',
+	message = 'output should match'
 ) {
-	cp.execSync('node dist/main.cjs', {
-		env: { ...process.env, ...parseInputs(inputs) },
-		stdio: 'inherit',
-	});
+	const stdout = cp
+		.execSync('node dist/main.cjs', {
+			env: { ...process.env, ...parseInputs(inputs) }
+		})
+		.toString();
+	const outputLog = stdout
+		.replace(/\\r\\n/gm, '')
+		.match(/::set-output name=form::(.*)/g)[0];
+	const output = JSON.parse(outputLog.replace('::set-output name=form::', ''));
+	const logs = stdout.replace(outputLog, '').trim();
+	logs && console.log(logs);
 	assertYAMLIsEqual(actualPath, expectedPath, message);
+	assert.deepStrictEqual(
+		output,
+		readYAMLFile(expectedPath),
+		'should set outputs.form'
+	);
 }
 
 describe('action', function () {
@@ -53,7 +65,7 @@ describe('action', function () {
 		assert.equal(
 			fs.readFileSync(test).toString(),
 			fs.readFileSync(template).toString(),
-			'should prepare test',
+			'should prepare test'
 		);
 	});
 	this.afterEach(() => {
@@ -66,11 +78,24 @@ describe('action', function () {
 			{
 				form: test,
 				dropdown: 'version',
-				options: ['1.2.3', '4.5.6', '7.8.9'],
-				dry_run: true,
+				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
-			expected,
+			expected
+		);
+	});
+
+	it('passing attributes', async function () {
+		assertForm(
+			{
+				form: test,
+				dropdown: 'version',
+				label: 'pip',
+				description: 'foo bar',
+				options: ['1.2.3', '4.5.6', '7.8.9']
+			},
+			test,
+			path.resolve(__dirname, 'attrs.yml')
 		);
 	});
 
@@ -79,8 +104,8 @@ describe('action', function () {
 			cp.execSync(
 				'git diff --no-index test/template.yml test/expected.yml -w -b -B -I ^s*- -R  --src-prefix ./ --dst-prefix ./ > test/diff.txt',
 				{
-					cwd: path.resolve(__dirname, '..'),
-				},
+					cwd: path.resolve(__dirname, '..')
+				}
 			).toString();
 		} catch (error) {
 			// fails for some reason but manages to create the diff
@@ -100,11 +125,10 @@ describe('action', function () {
 				template,
 				form: test,
 				dropdown: 'version',
-				options: ['1.2.3', '4.5.6', '7.8.9'],
-				dry_run: true,
+				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
-			expected,
+			expected
 		);
 	});
 
@@ -116,36 +140,33 @@ describe('action', function () {
 				template,
 				form: test,
 				dropdown: 'version',
-				options: ['1.2.3', '4.5.6', '7.8.9'],
-				dry_run: true,
+				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
 			expected,
-			'step #1',
+			'step #1'
 		);
 		assertForm(
 			{
 				template,
 				form: test,
 				dropdown: 'dropdown',
-				options: ['a', 'b', 'c'],
-				dry_run: true,
+				options: ['a', 'b', 'c']
 			},
 			test,
 			path.resolve(__dirname, 'a.yml'),
-			'step #2',
+			'step #2'
 		);
 		assertForm(
 			{
 				template,
 				form: test,
 				dropdown: 'empty',
-				options: ['d', 'e', 'f'],
-				dry_run: true,
+				options: ['d', 'e', 'f']
 			},
 			test,
 			path.resolve(__dirname, 'b.yml'),
-			'step #3',
+			'step #3'
 		);
 	});
 
@@ -158,12 +179,11 @@ describe('action', function () {
 				template,
 				form: test,
 				dropdown: 'version',
-				options: ['1.2.3', '4.5.6', '7.8.9'],
-				dry_run: true,
+				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
 			expected,
-			'should preserve template static dropdown',
+			'should preserve template static dropdown'
 		);
 	});
 });
