@@ -1,4 +1,4 @@
-import { getInput, setFailed } from '@actions/core';
+import { getInput, setFailed, setOutput } from '@actions/core';
 import { writeYAML } from './util';
 
 export async function run() {
@@ -7,11 +7,17 @@ export async function run() {
 		const template = getInput('template', { trimWhitespace: true });
 		const dropdownId = getInput('dropdown', {
 			trimWhitespace: true,
-			required: true,
+			required: true
+		});
+		const label = getInput('label', {
+			trimWhitespace: true
+		});
+		const description = getInput('description', {
+			trimWhitespace: true
 		});
 		const optionsInput = getInput('options', {
 			trimWhitespace: true,
-			required: true,
+			required: true
 		});
 		let options;
 		try {
@@ -25,7 +31,12 @@ export async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		writeYAML(form, template, dropdownId, options);
+		const parsed = writeYAML(form, template, dropdownId, {
+			label,
+			description,
+			options
+		});
+		setOutput('form', parsed);
 	} catch (error) {
 		console.error(error);
 		setFailed(error);

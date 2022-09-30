@@ -5,6 +5,7 @@ body:
     id: version
     attributes:
       label: version
+      description: Package version
       options:
         - 1.2.3
         - 4.5.6

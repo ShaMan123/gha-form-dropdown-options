@@ -34,16 +34,35 @@ inputs:
     description: A stringified array of options
     type: string
     required: true
-  commit_message:
+  label:
+    description: |
+      The label of the dropdown
+    type: string
+  description:
+    description: |
+      The description of the dropdown
     type: string
     required: true
+  commit_message:
+    description: 'defaults to `chore(): update [REPORT_NAME]`'
+    type: string
   dry_run:
-    description: When set to `true` will not commit the modified yaml form
-    default: false
-    type: boolean
+    description: |
+      Pass `no-commit` to leave the git history untouched
+      Pass `no-push` to disable pushing the commit if it exists
+    type: choice
+    options:
+      - no-commit
+      - no-push
 
 # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
+  form:
+    description: JSON stringified form
+    value: ${{ steps.process.outputs.form }}
+  modified:
+    description: form has been modified by action
+    value: ${{ steps.process.outputs.modified }}
   pushed:
     description: pushed to origin
     value: ${{ steps.commit.outputs.pushed || false }}
@@ -54,8 +73,14 @@ runs:
     - name: Update ${{ inputs.form }}
       id: process
       run: |
-        echo "Updating ${{ inputs.form }}"
         node ${{ github.action_path }}/dist/main.cjs
+        if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]]; then
+          echo "Form ${{ inputs.form }} has been modified"
+          echo "::set-output name=modified::true"
+        else
+          echo "Form ${{ inputs.form }} is up to date"
+          echo "::set-output name=modified::false"
+        fi
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
@@ -63,23 +88,26 @@ runs:
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}
-        INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
-    - name: Commit
+    - name: Commit & Push
       id: commit
-      if: ${{ !fromJSON(inputs.dry_run) }}
       run: |
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
-        git add ${{ inputs.form }}
-        UNTRACKED=false
-        git diff --staged --quiet || UNTRACKED=true
-        if [ $UNTRACKED = true ]; then
-          echo "Form ${{ inputs.form }} has been updated"
+        PUSHED=false
+        if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
-          git commit -m "${{ inputs.commit_message }}"
-          git pull --ff-only
-          git push
+          git add ${{ inputs.form }}
+          MSG='${{ inputs.commit_message }}'
+          if [[ $MSG == '' ]]; then
+            MSG='chore(): update ${{ fromJSON(steps.process.outputs.form).name }}'
+          fi
+          git commit -m "$MSG"
+          if [[ ${{ inputs.dry_run != 'no-push' }} == true ]]; then
+            echo "Pushing to upstream"
+            git pull --ff-only
+            git push
+            PUSHED=true
+          fi
         fi
-        echo "::set-output name=pushed::$UNTRACKED"
-      # https://askubuntu.com/a/29379
+        echo "::set-output name=pushed::$PUSHED"
       shell: bash

@@ -6476,7 +6476,7 @@ function readYAML(file, template) {
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
 			const {
-				attributes: { options },
+				attributes: { options }
 			} = entry;
 			if (
 				!options ||
@@ -6492,19 +6492,30 @@ function readYAML(file, template) {
 	return readYAMLFile(template || file);
 }
 
-function writeYAML(file, template, dropdownId, options) {
+function writeYAML(file, template, dropdownId, attributes) {
 	const content = readYAML(file, template);
 	const found = content.body.find(
-		(entry) => entry.id === dropdownId && entry.type === 'dropdown',
+		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
 	);
 	if (!found) {
 		throw new Error(
 			`dropdown ${dropdownId} not found.\n${content.body.filter(
-				(entry) => entry.type === 'dropdown',
-			)}`,
+				(entry) => entry.type === 'dropdown'
+			)}`
 		);
 	}
-	found.attributes.options = options;
+	const compatAttributes = {};
+	for (const key in attributes) {
+		if (attributes[key]) {
+			// compatAttributes[key] =
+			// 	template &&
+			// 	(typeof found.attributes[key] === 'string' || !found.attributes[key])
+			// 		? attributes[key].replace('${...}', found.attributes[key])
+			// 		: attributes[key];
+			compatAttributes[key] = attributes[key];
+		}
+	}
+	found.attributes = { ...found.attributes, ...compatAttributes };
 	let out = stringifyYAML(content);
 	if (template) {
 		const HEADER = `
@@ -6516,6 +6527,7 @@ function writeYAML(file, template, dropdownId, options) {
 		out = `${HEADER}\n\n${out}`;
 	}
 	fs__default["default"].writeFileSync(file, out);
+	return content;
 }
 
 async function run() {
@@ -6524,11 +6536,17 @@ async function run() {
 		const template = coreExports.getInput('template', { trimWhitespace: true });
 		const dropdownId = coreExports.getInput('dropdown', {
 			trimWhitespace: true,
-			required: true,
+			required: true
+		});
+		const label = coreExports.getInput('label', {
+			trimWhitespace: true
+		});
+		const description = coreExports.getInput('description', {
+			trimWhitespace: true
 		});
 		const optionsInput = coreExports.getInput('options', {
 			trimWhitespace: true,
-			required: true,
+			required: true
 		});
 		let options;
 		try {
@@ -6542,7 +6560,12 @@ async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		writeYAML(form, template, dropdownId, options);
+		const parsed = writeYAML(form, template, dropdownId, {
+			label,
+			description,
+			options
+		});
+		coreExports.setOutput('form', parsed);
 	} catch (error) {
 		console.error(error);
 		coreExports.setFailed(error);
