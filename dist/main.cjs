@@ -23746,7 +23746,8 @@ function writeYAML({
 	dropdown: dropdownId,
 	attributes,
 	strategy,
-	unique
+	unique,
+	noWrite
 }) {
 	const { content, template, build } = readYAML(form, templateId, strategy);
 	const dropdown = findDropdown(content, dropdownId);
@@ -23813,7 +23814,7 @@ function writeYAML({
 `;
 		out = `${HEADER}\n\n${out}`;
 	}
-	fs__default["default"].writeFileSync(form, out);
+	!noWrite && fs__default["default"].writeFileSync(form, out);
 	return content;
 }
 
@@ -23847,6 +23848,11 @@ async function run() {
 			trimWhitespace: true,
 			required: true
 		});
+		const noWrite =
+			coreExports.getInput('dry_run', {
+				trimWhitespace: true
+			}) === 'no-write';
+
 		let options;
 		try {
 			options = JSON.parse(optionsInput);
@@ -23872,7 +23878,8 @@ async function run() {
 				description,
 				options
 			},
-			unique
+			unique,
+			noWrite
 		});
 		coreExports.setOutput('form', parsed);
 	} catch (error) {

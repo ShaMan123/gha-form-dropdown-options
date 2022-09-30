@@ -76,10 +76,12 @@ inputs:
     default: '$'
   dry_run:
     description: |
+      Pass `no-write` to leave `form` untouched
       Pass `no-commit` to leave the git history untouched
-      Pass `no-push` to disable pushing the commit if it exists
+      Pass `no-push` to leave the commit untouched
     type: choice
     options:
+      - no-write
       - no-commit
       - no-push
 
@@ -121,6 +123,7 @@ runs:
         INPUT_UNIQUE: ${{ inputs.unique }}
         INPUT_STRATEGY: ${{ inputs.strategy }}
         INPUT_ID_PREFIX: ${{ inputs.id_prefix }}
+        INPUT_DRY_RUN: ${{ inputs.dry_run }}
     - name: Commit & Push
       id: commit
       run: |
