@@ -48,8 +48,9 @@ function assertForm(
 		.replace(/\\r\\n/gm, '')
 		.match(/::set-output name=form::(.*)/g)[0];
 	const output = JSON.parse(outputLog.replace('::set-output name=form::', ''));
-	const logs = stdout.replace(outputLog, '').trim();
+	const logs = !process.env.CI && stdout.replace(outputLog, '').trim();
 	logs && console.log(logs);
+	// console.log(stdout);
 	assertYAMLIsEqual(actualPath, expectedPath, message);
 	assert.deepStrictEqual(
 		output,
@@ -64,6 +65,14 @@ describe('action', function () {
 	const test = path.resolve(__dirname, 'test.yml');
 	this.timeout(5000);
 	let preserveTemp = false;
+	function prepareTest(testTemplate = template) {
+		fs.writeFileSync(test, fs.readFileSync(testTemplate));
+		assert.equal(
+			fs.readFileSync(test).toString(),
+			fs.readFileSync(testTemplate).toString(),
+			'should prepare test'
+		);
+	}
 	function keepOutput() {
 		preserveTemp = true;
 	}
@@ -71,17 +80,9 @@ describe('action', function () {
 		// https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 		dotenv.config();
 	});
-	this.beforeEach(() => {
-		fs.writeFileSync(test, fs.readFileSync(template));
-		assert.equal(
-			fs.readFileSync(test).toString(),
-			fs.readFileSync(template).toString(),
-			'should prepare test'
-		);
-	});
 	this.afterEach(() => {
 		if (!preserveTemp) {
-			fs.unlinkSync(test);
+			fs.existsSync(test) && fs.unlinkSync(test);
 			assert.ok(!fs.existsSync(test), 'should cleanup test');
 		}
 		preserveTemp = false;
@@ -198,11 +199,12 @@ describe('action', function () {
 		});
 	});
 
-	it('passing options', async function () {
+	it('passing options', function () {
+		prepareTest();
 		assertForm(
 			{
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
@@ -210,11 +212,12 @@ describe('action', function () {
 		);
 	});
 
-	it('passing attributes', async function () {
+	it('passing attributes', function () {
+		prepareTest();
 		assertForm(
 			{
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				label: 'pip',
 				description: 'foo bar',
 				options: ['1.2.3', '4.5.6', '7.8.9']
@@ -224,7 +227,25 @@ describe('action', function () {
 		);
 	});
 
-	it.skip('TODO: keeps comments', async function () {
+	it('trying to edit a non existing dropdown', function () {
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: 'version',
+						options: ['1.2.3', '4.5.6', '7.8.9']
+					},
+					test,
+					expected
+				),
+			'should throw not found'
+		);
+	});
+
+	it.skip('TODO: keeps comments', function () {
+		prepareTest();
 		try {
 			cp.execSync(
 				'git diff --no-index test/template.yml test/expected.yml -w -b -B -I ^s*- -R  --src-prefix ./ --dst-prefix ./ > test/diff.txt',
@@ -242,14 +263,90 @@ describe('action', function () {
 		assert.equal(diff, '', 'diff should be empty');
 	});
 
-	it('using a template', async function () {
-		fs.unlinkSync(test);
+	it('trying to edit a static dropdown - no built form', function () {
+		const template = path.resolve(__dirname, 'template2.yml');
+		assert.ok(!fs.existsSync(test), 'should cleanup test file');
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
+						description: '${...}\nUpdated',
+						strategy: 'empty-options'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
+						description: '${...}\nUpdated',
+						strategy: 'id-prefix',
+						id_prefix: '#'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+	});
+
+	it('trying to edit a static dropdown - built form', function () {
+		const template = path.resolve(__dirname, 'template2.yml');
+		prepareTest(template);
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
+						description: '${...}\nUpdated',
+						strategy: 'empty-options'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
+						description: '${...}\nUpdated',
+						strategy: 'id-prefix',
+						id_prefix: '#'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+	});
+
+	it('using a template', function () {
+		const template = path.resolve(__dirname, 'template2.yml');
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
 			{
 				template,
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
 				description: '${...}\nUpdated'
 			},
@@ -258,14 +355,13 @@ describe('action', function () {
 		);
 	});
 
-	it('using a template in multiple steps', async function () {
-		fs.unlinkSync(test);
+	it('using a template in multiple steps', function () {
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
 			{
 				template,
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
@@ -296,7 +392,7 @@ describe('action', function () {
 		);
 	});
 
-	it('editing a template', async function () {
+	it('editing a template', function () {
 		const dist = path.resolve(__dirname, 'dist.yml');
 		fs.writeFileSync(test, fs.readFileSync(dist));
 		assertYAMLIsEqual(test, dist, 'should prepare test');
@@ -304,7 +400,7 @@ describe('action', function () {
 			{
 				template,
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
