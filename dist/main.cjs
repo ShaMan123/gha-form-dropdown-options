@@ -6501,10 +6501,13 @@ function isDynamicDropdown(dropdown, strategy) {
 }
 
 function readYAML(file, template, strategy) {
-	if (template && fs__default["default"].existsSync(file)) {
+	if (!template) {
+		return readYAMLFile(file);
+	}
+	const templateContent = readYAMLFile(template);
+	if (fs__default["default"].existsSync(file)) {
 		// avoid overriding existing options by prefilling template with actual form data
 		// avoid prefilling static dropdown (with populated options) in case the template has been updated
-		const templateContent = readYAMLFile(template);
 		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
@@ -6515,7 +6518,13 @@ function readYAML(file, template, strategy) {
 		});
 		return templateContent;
 	}
-	return readYAMLFile(template || file);
+	return templateContent;
+}
+
+function findDropdown(content, dropdownId) {
+	return content.body.find(
+		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
+	);
 }
 
 function writeYAML({
@@ -6526,14 +6535,25 @@ function writeYAML({
 	strategy
 }) {
 	const content = readYAML(form, template, strategy);
-	const found = content.body.find(
-		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
-	);
+	const found = findDropdown(content, dropdownId);
+	const templateContent = !!template && readYAMLFile(template);
 	if (!found) {
 		throw new Error(
-			`dropdown ${dropdownId} not found.\n${content.body.filter(
-				(entry) => entry.type === 'dropdown'
-			)}`
+			`Dropdown '${dropdownId}' not found.\nShould be one of ${content.body
+				.filter((entry) => entry.type === 'dropdown')
+				.map(({ id }) => `'${id}'`)
+				.join(', ')}.`
+		);
+	} else if (
+		templateContent &&
+		!isDynamicDropdown(findDropdown(templateContent, dropdownId), strategy)
+	) {
+		throw new Error(
+			`Conflicting Strategy\nTrying to update a static dropdown\n${JSON.stringify(
+				{ dropdown: findDropdown(templateContent, dropdownId), strategy },
+				null,
+				2
+			).replace(/"/gm, '')}`
 		);
 	}
 	const compatAttributes = {};
@@ -6547,7 +6567,9 @@ function writeYAML({
 			} else if (Array.isArray(value) && Array.isArray(templateValue)) {
 				const out = [];
 				value.forEach((entry) =>
-					entry === RE ? out.push(...templateValue) : out.push(entry)
+					entry === RE
+						? out.push(...templateValue.filter((opt) => !!opt))
+						: out.push(entry)
 				);
 				value = out;
 			}
