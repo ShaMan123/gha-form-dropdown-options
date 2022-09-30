@@ -93,7 +93,11 @@ export function writeYAML({
 			)}`
 		);
 	} else if (!isDynamicDropdown(found, strategy)) {
-		throw new Error(`Conflicting strategy ${JSON.stringify(strategy)}`);
+		throw new Error(
+			`Conflicting strategy ${JSON.stringify(
+				strategy
+			)} found. Trying to update a static dropdown.`
+		);
 	}
 	const compatAttributes = {};
 	for (const key in attributes) {
