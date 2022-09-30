@@ -22,7 +22,6 @@ body:
       options:
         - ci-update-long-report
         - main
-        - no-write
         - safeguard
     validations:
       required: true
