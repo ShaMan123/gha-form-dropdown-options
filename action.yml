@@ -103,8 +103,6 @@ runs:
       id: process
       run: |
         node ${{ github.action_path }}/dist/main.cjs
-        git status --porcelain
-        git status --porcelain | grep -c '.*\s*${{ inputs.form }}'
         if [[ $(git status --porcelain | grep -c '.*\s*${{ inputs.form }}') -eq 1 ]]; then
           echo "Form ${{ inputs.form }} has been modified"
           echo "::set-output name=modified::true"
