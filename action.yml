@@ -72,7 +72,7 @@ inputs:
       - mixed
   id_prefix:
     description: |
-      The prefix used by `strategy` to determine if a dropdown is **not** static
+      The prefix used by `strategy` to determine if a dropdown is dynamic
     type: string
     default: '$'
   dry_run:
