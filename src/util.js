@@ -30,7 +30,7 @@ function readYAML(file, template) {
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
 			const {
-				attributes: { options },
+				attributes: { options }
 			} = entry;
 			if (
 				!options ||
@@ -46,19 +46,30 @@ function readYAML(file, template) {
 	return readYAMLFile(template || file);
 }
 
-export function writeYAML(file, template, dropdownId, options) {
+export function writeYAML(file, template, dropdownId, attributes) {
 	const content = readYAML(file, template);
 	const found = content.body.find(
-		(entry) => entry.id === dropdownId && entry.type === 'dropdown',
+		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
 	);
 	if (!found) {
 		throw new Error(
 			`dropdown ${dropdownId} not found.\n${content.body.filter(
-				(entry) => entry.type === 'dropdown',
-			)}`,
+				(entry) => entry.type === 'dropdown'
+			)}`
 		);
 	}
-	found.attributes.options = options;
+	const compatAttributes = {};
+	for (const key in attributes) {
+		if (attributes[key]) {
+			// compatAttributes[key] =
+			// 	template &&
+			// 	(typeof found.attributes[key] === 'string' || !found.attributes[key])
+			// 		? attributes[key].replace('${...}', found.attributes[key])
+			// 		: attributes[key];
+			compatAttributes[key] = attributes[key];
+		}
+	}
+	found.attributes = { ...found.attributes, ...compatAttributes };
 	let out = stringifyYAML(content);
 	if (template) {
 		const HEADER = `
@@ -70,4 +81,5 @@ export function writeYAML(file, template, dropdownId, options) {
 		out = `${HEADER}\n\n${out}`;
 	}
 	fs.writeFileSync(file, out);
+	return content;
 }

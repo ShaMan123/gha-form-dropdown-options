@@ -34,9 +34,18 @@ inputs:
     description: A stringified array of options
     type: string
     required: true
-  commit_message:
+  label:
+    description: |
+      The label of the dropdown
+    type: string
+  description:
+    description: |
+      The description of the dropdown
     type: string
     required: true
+  commit_message:
+    description: 'defaults to `chore(): update [REPORT_NAME]`'
+    type: string
   dry_run:
     description: When set to `true` will not push the committed yaml form
     default: false
@@ -44,8 +53,11 @@ inputs:
 
 # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
+  form:
+    description: JSON stringified form
+    value: ${{ steps.process.outputs.form }}
   modified:
-    description: pushed to origin
+    description: form has been modified by action
     value: ${{ steps.process.outputs.modified }}
   pushed:
     description: pushed to origin
@@ -72,7 +84,6 @@ runs:
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}
-        INPUT_COMMIT_MESSAGE: ${{ inputs.commit_message }}
     - name: Commit & Push
       id: commit
       run: |
@@ -82,7 +93,7 @@ runs:
         if [[ ${{ steps.process.outputs.modified }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
           git add ${{ inputs.form }}
-          git commit -m "${{ inputs.commit_message }}"
+          git commit -m "${{ inputs.commit_message || 'chore(): update ' + fromJSON(steps.process.outputs.form).name }}"
           if [[ ${{ !fromJSON(inputs.dry_run) }} == true ]]; then
             echo "Pushing to upstream"
             git pull --ff-only
