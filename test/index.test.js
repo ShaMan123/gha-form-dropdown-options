@@ -42,15 +42,15 @@ function assertForm(
 					...inputs
 				})
 			}
+			// stdio: 'inherit'
 		})
 		.toString();
+
 	const outputLog = stdout
 		.replace(/\\r\\n/gm, '')
 		.match(/::set-output name=form::(.*)/g)[0];
 	const output = JSON.parse(outputLog.replace('::set-output name=form::', ''));
-	const logs = !process.env.CI && stdout.replace(outputLog, '').trim();
-	logs && console.log(logs);
-	// console.log(stdout);
+	!process.env.CI && console.log(stdout);
 	assertYAMLIsEqual(actualPath, expectedPath, message);
 	assert.deepStrictEqual(
 		output,
@@ -273,8 +273,8 @@ describe('action', function () {
 						template,
 						form: test,
 						dropdown: '$version',
-						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
-						description: '${...}\nUpdated',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
 						strategy: 'empty-options'
 					},
 					test,
@@ -289,8 +289,8 @@ describe('action', function () {
 						template,
 						form: test,
 						dropdown: '$version',
-						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
-						description: '${...}\nUpdated',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
 						strategy: 'id-prefix',
 						id_prefix: '#'
 					},
@@ -311,8 +311,8 @@ describe('action', function () {
 						template,
 						form: test,
 						dropdown: '$version',
-						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
-						description: '${...}\nUpdated',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
 						strategy: 'empty-options'
 					},
 					test,
@@ -327,8 +327,8 @@ describe('action', function () {
 						template,
 						form: test,
 						dropdown: '$version',
-						options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
-						description: '${...}\nUpdated',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
 						strategy: 'id-prefix',
 						id_prefix: '#'
 					},
@@ -339,7 +339,7 @@ describe('action', function () {
 		);
 	});
 
-	it('using a template', function () {
+	it('using a template with substitution', function () {
 		const template = path.resolve(__dirname, 'template2.yml');
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
@@ -347,11 +347,22 @@ describe('action', function () {
 				template,
 				form: test,
 				dropdown: '$version',
-				options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
-				description: '${...}\nUpdated'
+				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}', '{...}'],
+				description: '{...}\nUpdated'
 			},
 			test,
 			path.resolve(__dirname, 'subs.yml')
+		);
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: '$version',
+				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}'],
+				description: '{{...}}\nUpdated'
+			},
+			test,
+			path.resolve(__dirname, 'subs2.yml')
 		);
 	});
 
