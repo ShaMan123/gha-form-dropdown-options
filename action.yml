@@ -62,8 +62,8 @@ inputs:
       The strategy used to determine if a dropdown is static or not.
       The `empty-options` strategy determines if a dropdown is dynamic by checking if the template's options are empty.
       The `id-prefix` strategy determines if a dropdown is dynamic or not by checking its id prefix depending on the value of `id_prefix`.
-      `id-prefix` is strict (throwing on failure) and allows more flexibility, such as dynamic substitution.
-      The `mixed` strategy uses both but is fail safe.
+      `id-prefix` is strict and allows more flexibility, such as dynamic substitution.
+      The `mixed` strategy uses both.
     type: choice
     default: mixed
     options:
