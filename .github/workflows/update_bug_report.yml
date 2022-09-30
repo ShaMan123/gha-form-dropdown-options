@@ -164,16 +164,17 @@ jobs:
       - name: Bug report modified? ${{ steps.labels.outputs.modified }}
         run: |
 
-      - name: Update dates and commit
-        id: commit
+      - name: Update dates
+        id: dates
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
           dropdown: $dates
           options: ${{ needs.pre.outputs.dates }}
-          commit_message: 'chore(): update bug report'
-      - name: Pushed? ${{ steps.commit.outputs.pushed }}
-        run: |
+          dry_run: no-push
+      - name: Pushed? ${{ steps.dates.outputs.branches || steps.dates.outputs.labels || steps.dates.outputs.modified  }}
+        if: steps.dates.outputs.branches || steps.dates.outputs.labels || steps.dates.outputs.modified
+        run: git push
 
   update-long-report:
     name: Update long report on branch `${{ needs.pre.outputs.branch }}`
