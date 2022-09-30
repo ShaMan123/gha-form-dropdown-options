@@ -1,4 +1,4 @@
-import { getInput, setFailed, setOutput } from '@actions/core';
+import { getInput, setFailed, setOutput, getBooleanInput } from '@actions/core';
 import { writeYAML } from './util';
 
 export async function run() {
@@ -19,12 +19,10 @@ export async function run() {
 			trimWhitespace: true,
 			required: true
 		});
-		const unique = JSON.parse(
-			getInput('unique', {
-				trimWhitespace: true,
-				required: true
-			})
-		);
+		const unique = getBooleanInput('unique', {
+			trimWhitespace: true,
+			required: true
+		});
 		const strategy = getInput('strategy', {
 			trimWhitespace: true,
 			required: true

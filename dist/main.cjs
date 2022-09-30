@@ -23835,12 +23835,10 @@ async function run() {
 			trimWhitespace: true,
 			required: true
 		});
-		const unique = JSON.parse(
-			coreExports.getInput('unique', {
-				trimWhitespace: true,
-				required: true
-			})
-		);
+		const unique = coreExports.getBooleanInput('unique', {
+			trimWhitespace: true,
+			required: true
+		});
 		const strategy = coreExports.getInput('strategy', {
 			trimWhitespace: true,
 			required: true
