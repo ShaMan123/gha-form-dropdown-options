@@ -147,7 +147,7 @@ jobs:
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
-          dropdown: $branches
+          dropdown: _branches
           options: ${{ needs.pre.outputs.branches }}
           dry_run: no-push
       - name: Bug report modified? ${{ steps.branches.outputs.modified }}
@@ -158,7 +158,7 @@ jobs:
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
-          dropdown: $labels
+          dropdown: _labels
           options: ${{ needs.pre.outputs.labels }}
           dry_run: no-push
       - name: Bug report modified? ${{ steps.labels.outputs.modified }}
@@ -169,7 +169,7 @@ jobs:
         uses: ./
         with:
           form: .github/ISSUE_TEMPLATE/bug_report.yml
-          dropdown: $dates
+          dropdown: _dates
           options: ${{ needs.pre.outputs.dates }}
           dry_run: no-push
       - name: Pushed? ${{ steps.branches.outputs.modified || steps.labels.outputs.modified || steps.dates.outputs.modified  }}
@@ -218,7 +218,7 @@ jobs:
           # passing template again for testing
           template: .github/template_report.yml
           form: .github/ISSUE_TEMPLATE/long_report.yml
-          dropdown: $subs
+          dropdown: _subs
           options: '{{...}},${{ needs.pre.outputs.timestamp }}'
           description: '{...}\nUpdated ${{ needs.pre.outputs.timestamp }}'
           dry_run: no-push

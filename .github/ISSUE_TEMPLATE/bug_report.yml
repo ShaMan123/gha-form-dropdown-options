@@ -15,7 +15,7 @@ body:
         - label: I agree to follow this project's Code of Conduct
           required: true
   - type: dropdown
-    id: $branches
+    id: _branches
     attributes:
       label: Repository Branches
       description: Fetched by action
@@ -26,7 +26,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: $labels
+    id: _labels
     attributes:
       label: Repository labels
       description: Fetched by action
@@ -45,7 +45,7 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: $dates
+    id: _dates
     attributes:
       label: Updating Dates
       description: Choose a day next week

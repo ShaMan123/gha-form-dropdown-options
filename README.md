@@ -64,7 +64,7 @@ Using a `template` is **suggested** for the following:
 ```yaml template.yml
     ...
     - type: dropdown
-      id: $dropdown
+      id: _dropdown
       description: 'template says: {...}, build says: ...'
       options:
         - a
@@ -76,7 +76,7 @@ Using a `template` is **suggested** for the following:
 ```yaml workflow.yml
     ...
     with:
-      id: $dropdown
+      id: _dropdown
       description: 'template says: {...}, build says: ...'
       options: {...}, b
     ...
@@ -87,7 +87,7 @@ Using a `template` is **suggested** for the following:
 ```yaml build.yml #1
     ...
     with:
-      id: $dropdown
+      id: _dropdown
       description: 'template says: template says: {...}, build says: ..., build says: ...'
       options:
         - a
@@ -100,7 +100,7 @@ Using a `template` is **suggested** for the following:
 ```yaml workflow.yml
     ...
     with:
-      id: $dropdown
+      id: _dropdown
       description: 'template says: {{...}}, build says: ...'
       options: {{...}}, c
     ...
@@ -111,7 +111,7 @@ Using a `template` is **suggested** for the following:
 ```yaml build.yml #2
     ...
     with:
-      id: $dropdown
+      id: _dropdown
       description: 'template says: template says: template says: {...}, build says: ..., build says: ..., build says: ...'
       options:
         - a
@@ -125,7 +125,7 @@ Using a `template` is **suggested** for the following:
 ```yaml workflow.yml
     ...
     with:
-      id: $dropdown
+      id: _dropdown
       description: 'template says: {{...}} but build says: ...'
       options: {...}, d
     ...
@@ -136,7 +136,7 @@ Using a `template` is **suggested** for the following:
 ```yaml build.yml #3
     ...
     with:
-      id: $dropdown
+      id: _dropdown
       description: 'template says: template says: template says: template says: {...}, build says: ..., build says: ..., build says: ... but build says: ...'
       options:
         - a
@@ -166,4 +166,3 @@ Consider using [![create-pull-request](https://img.shields.io/github/v/release/p
 
 Refer to the `update-long-report` job in [this workflow](.github/workflows/update_bug_report.yml) to see a usage example and to [PR #5](../../pull/5).\
 Don't forget to use the `dry_run` option.
-
