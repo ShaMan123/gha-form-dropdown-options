@@ -55,10 +55,13 @@ export function isDynamicDropdown(dropdown, strategy) {
 }
 
 function readYAML(file, template, strategy) {
-	if (template && fs.existsSync(file)) {
+	if (!template) {
+		return readYAMLFile(file);
+	}
+	const templateContent = readYAMLFile(template);
+	if (fs.existsSync(file)) {
 		// avoid overriding existing options by prefilling template with actual form data
 		// avoid prefilling static dropdown (with populated options) in case the template has been updated
-		const templateContent = readYAMLFile(template);
 		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
@@ -69,7 +72,7 @@ function readYAML(file, template, strategy) {
 		});
 		return templateContent;
 	}
-	return readYAMLFile(template || file);
+	return templateContent;
 }
 
 export function writeYAML({
@@ -85,10 +88,12 @@ export function writeYAML({
 	);
 	if (!found) {
 		throw new Error(
-			`dropdown ${dropdownId} not found.\n${content.body.filter(
+			`Dropdown ${dropdownId} not found.\n${content.body.filter(
 				(entry) => entry.type === 'dropdown'
 			)}`
 		);
+	} else if (!isDynamicDropdown(found, strategy)) {
+		throw new Error(`Conflicting strategy ${JSON.stringify(strategy)}`);
 	}
 	const compatAttributes = {};
 	for (const key in attributes) {
@@ -101,7 +106,9 @@ export function writeYAML({
 			} else if (Array.isArray(value) && Array.isArray(templateValue)) {
 				const out = [];
 				value.forEach((entry) =>
-					entry === RE ? out.push(...templateValue) : out.push(entry)
+					entry === RE
+						? out.push(...templateValue.filter((opt) => !!opt))
+						: out.push(entry)
 				);
 				value = out;
 			}
