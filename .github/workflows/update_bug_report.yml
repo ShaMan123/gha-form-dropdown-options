@@ -172,8 +172,8 @@ jobs:
           dropdown: $dates
           options: ${{ needs.pre.outputs.dates }}
           dry_run: no-push
-      - name: Pushed? ${{ steps.dates.outputs.branches || steps.dates.outputs.labels || steps.dates.outputs.modified  }}
-        if: steps.dates.outputs.branches || steps.dates.outputs.labels || steps.dates.outputs.modified
+      - name: Pushed? ${{ steps.branches.outputs.modified || steps.labels.outputs.modified || steps.dates.outputs.modified  }}
+        if: steps.branches.outputs.modified || steps.labels.outputs.modified || steps.dates.outputs.modified
         run: git push
 
   update-long-report:
