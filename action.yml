@@ -47,9 +47,13 @@ inputs:
     description: 'defaults to `chore(): update [REPORT_NAME]`'
     type: string
   dry_run:
-    description: When set to `true` will not push the committed yaml form
-    default: false
-    type: boolean
+    description: |
+      Pass `no-commit` to leave the git history untouched
+      Pass `no-push` to disable pushing the commit if it exists
+    type: choice
+    options:
+      - no-commit
+      - no-push
 
 # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
@@ -90,7 +94,7 @@ runs:
         git config user.name github-actions[bot]
         git config user.email github-actions[bot]@users.noreply.github.com
         PUSHED=false
-        if [[ ${{ steps.process.outputs.modified }} == true ]]; then
+        if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true]]; then
           echo "Committing ${{ inputs.form }}"
           git add ${{ inputs.form }}
           MSG='${{ inputs.commit_message }}'
@@ -98,7 +102,7 @@ runs:
             MSG='chore(): update ${{ fromJSON(steps.process.outputs.form).name }}'
           fi
           git commit -m "$MSG"
-          if [[ ${{ !fromJSON(inputs.dry_run) }} == true ]]; then
+          if [[ ${{ inputs.dry_run != 'no-push' }} == true ]]; then
             echo "Pushing to upstream"
             git pull --ff-only
             git push
