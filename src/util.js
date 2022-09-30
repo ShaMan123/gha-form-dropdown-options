@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { DEFAULT_SCHEMA, types, dump, load } from 'js-yaml';
+import { DEFAULT_SCHEMA, dump, load, types } from 'js-yaml';
 
 // configure null to be stringified to ''
 types.null.defaultStyle = 'empty';
@@ -75,6 +75,12 @@ function readYAML(file, template, strategy) {
 	return templateContent;
 }
 
+function findDropdown(content, dropdownId) {
+	return content.body.find(
+		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
+	);
+}
+
 export function writeYAML({
 	form,
 	template,
@@ -83,20 +89,25 @@ export function writeYAML({
 	strategy
 }) {
 	const content = readYAML(form, template, strategy);
-	const found = content.body.find(
-		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
-	);
+	const found = findDropdown(content, dropdownId);
+	const templateContent = !!template && readYAMLFile(template);
 	if (!found) {
 		throw new Error(
-			`Dropdown ${dropdownId} not found.\n${content.body.filter(
-				(entry) => entry.type === 'dropdown'
-			)}`
+			`Dropdown '${dropdownId}' not found.\nShould be one of ${content.body
+				.filter((entry) => entry.type === 'dropdown')
+				.map(({ id }) => `'${id}'`)
+				.join(', ')}.`
 		);
-	} else if (!isDynamicDropdown(found, strategy)) {
+	} else if (
+		templateContent &&
+		!isDynamicDropdown(findDropdown(templateContent, dropdownId), strategy)
+	) {
 		throw new Error(
-			`Conflicting strategy ${JSON.stringify(
-				strategy
-			)} found. Trying to update a static dropdown.`
+			`Conflicting Strategy\nTrying to update a static dropdown\n${JSON.stringify(
+				{ dropdown: findDropdown(templateContent, dropdownId), strategy },
+				null,
+				2
+			).replace(/"/gm, '')}`
 		);
 	}
 	const compatAttributes = {};
