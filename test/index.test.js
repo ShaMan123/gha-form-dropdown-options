@@ -38,7 +38,7 @@ function assertForm(
 				...process.env,
 				...parseInputs({
 					strategy: 'mixed',
-					id_prefix: '$',
+					id_prefix: '_',
 					unique: true,
 					...inputs
 				})
@@ -104,7 +104,7 @@ describe('action', function () {
 						},
 						{
 							strategy: 'id_prefix',
-							prefix: '$'
+							prefix: '_'
 						}
 					),
 				'should throw Unknown strategy'
@@ -114,14 +114,14 @@ describe('action', function () {
 			assert.ok(
 				isDynamicDropdown(
 					{
-						id: '$dropdown',
+						id: '_dropdown',
 						attributes: {
 							options: []
 						}
 					},
 					{
 						strategy: 'id-prefix',
-						prefix: '$'
+						prefix: '_'
 					}
 				)
 			);
@@ -135,7 +135,7 @@ describe('action', function () {
 					},
 					{
 						strategy: 'id-prefix',
-						prefix: '$'
+						prefix: '_'
 					}
 				)
 			);
@@ -151,21 +151,21 @@ describe('action', function () {
 					},
 					{
 						strategy: 'empty-options',
-						prefix: '$'
+						prefix: '_'
 					}
 				)
 			);
 			assert.ok(
 				!isDynamicDropdown(
 					{
-						id: '$dropdown',
+						id: '_dropdown',
 						attributes: {
 							options: ['a']
 						}
 					},
 					{
 						strategy: 'empty-options',
-						prefix: '$'
+						prefix: '_'
 					}
 				)
 			);
@@ -181,21 +181,21 @@ describe('action', function () {
 					},
 					{
 						strategy: 'mixed',
-						prefix: '$'
+						prefix: '_'
 					}
 				)
 			);
 			assert.ok(
 				isDynamicDropdown(
 					{
-						id: '$dropdown',
+						id: '_dropdown',
 						attributes: {
 							options: ['a']
 						}
 					},
 					{
 						strategy: 'mixed',
-						prefix: '$'
+						prefix: '_'
 					}
 				)
 			);
@@ -207,7 +207,7 @@ describe('action', function () {
 		assertForm(
 			{
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
@@ -220,7 +220,7 @@ describe('action', function () {
 		assertForm(
 			{
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				options: ['1.2.3', '4.5.6', '7.8.9'],
 				dry_run: 'no-write'
 			},
@@ -236,7 +236,7 @@ describe('action', function () {
 		assertForm(
 			{
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				label: 'pip',
 				description: 'foo bar',
 				options: ['1.2.3', '4.5.6', '7.8.9']
@@ -291,7 +291,7 @@ describe('action', function () {
 					{
 						template,
 						form: test,
-						dropdown: '$version',
+						dropdown: '_version',
 						options: ['1.2.3', '4.5.6', '7.8.9'],
 						description: '{...}\nUpdated',
 						strategy: 'empty-options'
@@ -307,7 +307,7 @@ describe('action', function () {
 					{
 						template,
 						form: test,
-						dropdown: '$version',
+						dropdown: '_version',
 						options: ['1.2.3', '4.5.6', '7.8.9'],
 						description: '{...}\nUpdated',
 						strategy: 'id-prefix',
@@ -329,7 +329,7 @@ describe('action', function () {
 					{
 						template,
 						form: test,
-						dropdown: '$version',
+						dropdown: '_version',
 						options: ['1.2.3', '4.5.6', '7.8.9'],
 						description: '{...}\nUpdated',
 						strategy: 'empty-options'
@@ -345,7 +345,7 @@ describe('action', function () {
 					{
 						template,
 						form: test,
-						dropdown: '$version',
+						dropdown: '_version',
 						options: ['1.2.3', '4.5.6', '7.8.9'],
 						description: '{...}\nUpdated',
 						strategy: 'id-prefix',
@@ -365,7 +365,7 @@ describe('action', function () {
 			{
 				template,
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}', '{...}'],
 				description: '{...}\nUpdated',
 				unique: false
@@ -377,7 +377,7 @@ describe('action', function () {
 			{
 				template,
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}'],
 				description: '{{...}}\nUpdated',
 				unique: false
@@ -393,7 +393,7 @@ describe('action', function () {
 			{
 				template,
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
@@ -432,7 +432,7 @@ describe('action', function () {
 			{
 				template,
 				form: test,
-				dropdown: '$version',
+				dropdown: '_version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
