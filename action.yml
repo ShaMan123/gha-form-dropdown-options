@@ -48,7 +48,6 @@ inputs:
       The description of the dropdown
       Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
-    required: true
   unique:
     description: |
       Whether `options` should be unique
