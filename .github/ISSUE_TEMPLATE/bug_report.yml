@@ -21,7 +21,7 @@ body:
       description: Fetched by action
       options:
         - bash
-        - ci-update-long-report!
+        - ci-update-long-report
         - main
         - safeguard
     validations:
