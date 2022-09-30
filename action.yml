@@ -27,7 +27,9 @@ inputs:
     type: string
     required: true
   dropdown:
-    description: The id of the dropdown in the yaml form to populate options into
+    description: |
+      The id of the dropdown in the yaml form to populate options into
+      Prefix the id with the value of `id_prefix`, see `strategy` for more details
     type: string
     required: true
   options:
