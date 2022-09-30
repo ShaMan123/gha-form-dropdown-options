@@ -22,7 +22,6 @@ body:
       options:
         - ci-update-long-report
         - main
-        - prefix_
         - safeguard
     validations:
       required: true
