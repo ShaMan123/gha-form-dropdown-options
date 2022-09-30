@@ -19,10 +19,12 @@ export async function run() {
 			trimWhitespace: true,
 			required: true
 		});
-		const unique = getInput('unique', {
-			trimWhitespace: true,
-			required: true
-		});
+		const unique = JSON.parse(
+			getInput('unique', {
+				trimWhitespace: true,
+				required: true
+			})
+		);
 		const strategy = getInput('strategy', {
 			trimWhitespace: true,
 			required: true
