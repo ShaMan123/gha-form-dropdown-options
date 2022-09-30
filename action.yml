@@ -34,7 +34,8 @@ inputs:
     required: true
   options:
     description: |
-      A stringified array of options and the dynamic substitution templates: `{...}`, `{{...}}`
+      A stringified array of options
+      Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
   label:
