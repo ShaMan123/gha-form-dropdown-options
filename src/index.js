@@ -1,4 +1,4 @@
-import { getInput, setFailed, setOutput, getBooleanInput } from '@actions/core';
+import { getBooleanInput, getInput, setFailed, setOutput } from '@actions/core';
 import { writeYAML } from './util';
 
 export async function run() {
@@ -31,6 +31,11 @@ export async function run() {
 			trimWhitespace: true,
 			required: true
 		});
+		const noWrite =
+			getInput('dry_run', {
+				trimWhitespace: true
+			}) === 'no-write';
+		console.log(noWrite);
 		let options;
 		try {
 			options = JSON.parse(optionsInput);
@@ -56,7 +61,8 @@ export async function run() {
 				description,
 				options
 			},
-			unique
+			unique,
+			noWrite
 		});
 		setOutput('form', parsed);
 	} catch (error) {

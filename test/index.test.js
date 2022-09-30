@@ -52,7 +52,9 @@ function assertForm(
 		.match(/::set-output name=form::(.*)/g)[0];
 	const output = JSON.parse(outputLog.replace('::set-output name=form::', ''));
 	!process.env.CI && console.log(stdout);
-	assertYAMLIsEqual(actualPath, expectedPath, message);
+	if (inputs.dry_run !== 'no-write') {
+		assertYAMLIsEqual(actualPath, expectedPath, message);
+	}
 	assert.deepStrictEqual(
 		output,
 		readYAMLFile(expectedPath),
@@ -211,6 +213,22 @@ describe('action', function () {
 			test,
 			expected
 		);
+	});
+
+	it('dry run', function () {
+		prepareTest();
+		assertForm(
+			{
+				form: test,
+				dropdown: '$version',
+				options: ['1.2.3', '4.5.6', '7.8.9'],
+				dry_run: 'no-write'
+			},
+			test,
+			expected,
+			'outputs.form should match'
+		);
+		assertYAMLIsEqual(test, template, 'should not have written file');
 	});
 
 	it('passing attributes', function () {

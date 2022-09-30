@@ -98,7 +98,8 @@ export function writeYAML({
 	dropdown: dropdownId,
 	attributes,
 	strategy,
-	unique
+	unique,
+	noWrite
 }) {
 	const { content, template, build } = readYAML(form, templateId, strategy);
 	const dropdown = findDropdown(content, dropdownId);
@@ -165,6 +166,6 @@ export function writeYAML({
 `;
 		out = `${HEADER}\n\n${out}`;
 	}
-	fs.writeFileSync(form, out);
+	!noWrite && fs.writeFileSync(form, out);
 	return content;
 }
