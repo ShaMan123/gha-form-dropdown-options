@@ -93,7 +93,7 @@ runs:
         if [[ ${{ steps.process.outputs.modified }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
           git add ${{ inputs.form }}
-          MSG=${{ inputs.commit_message }} || 'chore(): update ${{ fromJSON(steps.process.outputs.form).name }}'
+          MSG='${{ inputs.commit_message }}' || 'chore(): update ${{ fromJSON(steps.process.outputs.form).name }}'
           git commit -m "$MSG"
           if [[ ${{ !fromJSON(inputs.dry_run) }} == true ]]; then
             echo "Pushing to upstream"
