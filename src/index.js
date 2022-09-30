@@ -24,10 +24,8 @@ export async function run() {
 			required: true
 		});
 		const prefix = getInput('id_prefix', {
-			trimWhitespace: true
-		});
-		const prefixStatic = getInput('id_prefix_static', {
-			trimWhitespace: true
+			trimWhitespace: true,
+			required: true
 		});
 		let options;
 		try {
@@ -47,8 +45,7 @@ export async function run() {
 			dropdown: dropdownId,
 			strategy: {
 				strategy,
-				prefix,
-				prefixStatic
+				prefix
 			},
 			attributes: {
 				label,

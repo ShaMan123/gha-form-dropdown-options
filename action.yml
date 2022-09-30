@@ -54,7 +54,7 @@ inputs:
     description: |
       The strategy used to determine if a dropdown is static or not.
       The `empty-options` strategy determines if a dropdown is static by checking if the template's options aren't empty.
-      The `id-prefix` strategy determines if a dropdown is static or not by checking its id prefix depending on `id_prefix`, `id_prefix_static`.
+      The `id-prefix` strategy determines if a dropdown is static or not by checking its id prefix depending on the value of `id_prefix`.
       It is strict (throwing on failure) and allows more flexibility, e.g. concating template options and input options.
       The `mixed` strategy uses both but is fail safe.
     type: choice
@@ -68,11 +68,6 @@ inputs:
       The prefix used by `strategy` to determine if a dropdown is **not** static
     type: string
     default: '$'
-  id_prefix_static:
-    description: |
-      The prefix used by `strategy` to determine if a dropdown is static
-    type: string
-    default: ''
   dry_run:
     description: |
       Pass `no-commit` to leave the git history untouched
@@ -119,7 +114,6 @@ runs:
         INPUT_DESCRIPTION: ${{ inputs.description }}
         INPUT_STRATEGY: ${{ inputs.strategy }}
         INPUT_ID_PREFIX: ${{ inputs.id_prefix }}
-        INPUT_ID_PREFIX_STATIC: ${{ inputs.id_prefix_static }}
     - name: Commit & Push
       id: commit
       run: |

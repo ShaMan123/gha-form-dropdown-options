@@ -23,55 +23,34 @@ export function writeYAMLFile(file, data) {
 	fs.writeFileSync(file, stringifyYAML(data));
 }
 
-function isStaticDropdownEmptyOptions(dropdown) {
+function hasDropdownEmptyOptions(dropdown) {
 	const {
 		attributes: { options }
 	} = dropdown;
-	if (
+	return (
 		!options ||
 		!options.length ||
 		(Array.isArray(options) && options.every((option) => !option))
-	) {
-		return true;
-	} else {
-		return false;
-	}
+	);
 }
 
-function isStaticDropdownIdPrefix(dropdown, inputs) {
-	const { id } = dropdown;
-	const startWithStatic =
-		id.startWith(inputs.prefixStatic) && inputs.prefixStatic;
-	const startWithNotStatic = id.startWith(inputs.prefix) && inputs.prefix;
-	console.log(startWithStatic, startWithNotStatic);
-	if (startWithStatic && !startWithNotStatic) {
-		return true;
-	} else if (!startWithStatic && startWithNotStatic) {
-		return false;
-	} else {
-		return null;
-	}
+function hasDropdownIdPrefix(dropdown, strategy) {
+	return dropdown.id.startsWith(strategy.prefix);
 }
 
-function isStaticDropdown(dropdown, strategy) {
+export function isDynamicDropdown(dropdown, strategy) {
 	switch (strategy.strategy) {
 		case 'id-prefix':
-			const isStatic = isStaticDropdownIdPrefix(dropdown, strategy);
-			if (isStatic === null) {
-				throw new Error(
-					`Failed to determine if dropdown '${dropdown.id}' is static using the prefixes [${inputs.prefixStatic}, ${inputs.prefix}]`
-				);
-			}
-			return isStatic;
+			return hasDropdownIdPrefix(dropdown, strategy);
 		case 'empty-options':
-			return isStaticDropdownEmptyOptions(dropdown);
+			return hasDropdownEmptyOptions(dropdown);
 		case 'mixed':
 			return (
-				isStaticDropdownIdPrefix(dropdown, strategy) ||
-				isStaticDropdownEmptyOptions(dropdown)
+				hasDropdownIdPrefix(dropdown, strategy) ||
+				hasDropdownEmptyOptions(dropdown)
 			);
 		default:
-			throw new Error(`Unknown strategy '${strategy}'`);
+			throw new Error(`Unknown strategy '${strategy.strategy}'`);
 	}
 }
 
@@ -83,7 +62,7 @@ function readYAML(file, template, strategy) {
 		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
-			if (!isStaticDropdown(entry, strategy)) {
+			if (isDynamicDropdown(entry, strategy)) {
 				templateContent.body[index].attributes.options =
 					content.body[index].attributes.options;
 			}

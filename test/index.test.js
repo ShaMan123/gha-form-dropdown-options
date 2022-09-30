@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readYAMLFile } from '../src/util.js';
+import { readYAMLFile, isDynamicDropdown } from '../src/util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -34,7 +34,14 @@ function assertForm(
 ) {
 	const stdout = cp
 		.execSync('node --require source-map-support/register dist/main.cjs', {
-			env: { ...process.env, ...parseInputs(inputs) }
+			env: {
+				...process.env,
+				...parseInputs({
+					strategy: 'mixed',
+					id_prefix: '$',
+					...inputs
+				})
+			}
 		})
 		.toString();
 	const outputLog = stdout
@@ -54,9 +61,12 @@ function assertForm(
 describe('action', function () {
 	const expected = path.resolve(__dirname, 'expected.yml');
 	const template = path.resolve(__dirname, 'template.yml');
-	const test = path.resolve(__dirname, 'temp.yml');
+	const test = path.resolve(__dirname, 'test.yml');
 	this.timeout(5000);
 	let preserveTemp = false;
+	function keepOutput() {
+		preserveTemp = true;
+	}
 	this.beforeAll(() => {
 		// https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 		dotenv.config();
@@ -75,6 +85,117 @@ describe('action', function () {
 			assert.ok(!fs.existsSync(test), 'should cleanup test');
 		}
 		preserveTemp = false;
+	});
+
+	describe('strategy', function () {
+		it('safety', function () {
+			assert.throws(
+				() =>
+					isDynamicDropdown(
+						{
+							id: 'dropdown',
+							attributes: {
+								options: []
+							}
+						},
+						{
+							strategy: 'id_prefix',
+							prefix: '$'
+						}
+					),
+				'should throw Unknown strategy'
+			);
+		});
+		it('id-prefix', function () {
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: '$dropdown',
+						attributes: {
+							options: []
+						}
+					},
+					{
+						strategy: 'id-prefix',
+						prefix: '$'
+					}
+				)
+			);
+			assert.ok(
+				!isDynamicDropdown(
+					{
+						id: 'dropdown',
+						attributes: {
+							options: ['a']
+						}
+					},
+					{
+						strategy: 'id-prefix',
+						prefix: '$'
+					}
+				)
+			);
+		});
+		it('empty-options', function () {
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: 'dropdown',
+						attributes: {
+							options: []
+						}
+					},
+					{
+						strategy: 'empty-options',
+						prefix: '$'
+					}
+				)
+			);
+			assert.ok(
+				!isDynamicDropdown(
+					{
+						id: '$dropdown',
+						attributes: {
+							options: ['a']
+						}
+					},
+					{
+						strategy: 'empty-options',
+						prefix: '$'
+					}
+				)
+			);
+		});
+		it('mixed', function () {
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: 'dropdown',
+						attributes: {
+							options: []
+						}
+					},
+					{
+						strategy: 'mixed',
+						prefix: '$'
+					}
+				)
+			);
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: '$dropdown',
+						attributes: {
+							options: ['a']
+						}
+					},
+					{
+						strategy: 'mixed',
+						prefix: '$'
+					}
+				)
+			);
+		});
 	});
 
 	it('passing options', async function () {
@@ -122,7 +243,6 @@ describe('action', function () {
 	});
 
 	it('using a template', async function () {
-		// preserveTemp = true;
 		fs.unlinkSync(test);
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
@@ -130,11 +250,11 @@ describe('action', function () {
 				template,
 				form: test,
 				dropdown: 'version',
-				options: ['1.2.3', '4.5.6', '7.8.9']
-				// description: `\${...}\nUpdated: ${new Date().toISOString()}`
+				options: ['1.2.3', '${...}', '4.5.6', '7.8.9', '${...}'],
+				description: '${...}\nUpdated'
 			},
 			test,
-			expected
+			path.resolve(__dirname, 'subs.yml')
 		);
 	});
 
