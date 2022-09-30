@@ -1060,6 +1060,19 @@ body:
         - 
     validations:
       required: true
+  - type: dropdown
+    id: subs
+    attributes:
+      label: Recursive
+      description: Uses [Dynamic Substitution]()
+      options:
+        - 2022-09-27T00:00:00.000Z
+        - 2022-09-28T00:00:00.000Z
+        - 2022-09-29T00:00:00.000Z
+        - 2022-09-30T00:00:00.000Z
+        - 2022-10-01T00:00:00.000Z
+    validations:
+      required: true
   - type: textarea
     id: steps
     attributes:
