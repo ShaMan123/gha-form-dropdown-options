@@ -34,19 +34,18 @@ inputs:
     required: true
   options:
     description: |
-      A stringified array of options
-      When using a template it is possible to access the template's value using `${...}`
+      A stringified array of options and the special substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
   label:
     description: |
       The label of the dropdown
-      When using a template it is possible to access the template's value using `${...}`
+      Supports substitution templates: `{...}`, `{{...}}`
     type: string
   description:
     description: |
       The description of the dropdown
-      When using a template it is possible to access the template's value using `${...}`
+      Supports substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
   commit_message:
