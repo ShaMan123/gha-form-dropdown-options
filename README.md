@@ -14,10 +14,9 @@ Checkout [![issue-forms-version-dropdown](https://img.shields.io/github/v/tag/Sh
 
 ## Configuring
 
-Follow [this workflow](.github/workflows/update_bug_report.yml).\
-Replace the `uses: ./` directive to point to [![published action](https://img.shields.io/github/v/tag/ShaMan123/gha-form-dropdown-options?label=ShaMan123%2Fgha-form-dropdown-options%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-dropdown-options).
-
-Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
+- Follow [this workflow](.github/workflows/update_bug_report.yml).
+- Replace the `uses: ./` directive to point to [![published action](https://img.shields.io/github/v/tag/ShaMan123/gha-form-dropdown-options?label=ShaMan123%2Fgha-form-dropdown-options%40&sort=semver)](https://github.com/marketplace/actions/issue-forms-dropdown-options).
+- Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
 
 ## Live 🚀
 
