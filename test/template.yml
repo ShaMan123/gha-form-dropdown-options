@@ -3,7 +3,7 @@ title: 🧪 Test Form
 body:
   # a comment
   - type: dropdown
-    id: version
+    id: $version
     attributes:
       description: Package version
       label: version

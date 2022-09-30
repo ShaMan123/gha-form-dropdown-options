@@ -1,4 +1,4 @@
-import { getInput, setFailed, setOutput } from '@actions/core';
+import { getInput, setFailed, setOutput, getBooleanInput } from '@actions/core';
 import { writeYAML } from './util';
 
 export async function run() {
@@ -19,6 +19,18 @@ export async function run() {
 			trimWhitespace: true,
 			required: true
 		});
+		const unique = getBooleanInput('unique', {
+			trimWhitespace: true,
+			required: true
+		});
+		const strategy = getInput('strategy', {
+			trimWhitespace: true,
+			required: true
+		});
+		const prefix = getInput('id_prefix', {
+			trimWhitespace: true,
+			required: true
+		});
 		let options;
 		try {
 			options = JSON.parse(optionsInput);
@@ -31,10 +43,20 @@ export async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		const parsed = writeYAML(form, template, dropdownId, {
-			label,
-			description,
-			options
+		const parsed = writeYAML({
+			form,
+			template,
+			dropdown: dropdownId,
+			strategy: {
+				strategy,
+				prefix
+			},
+			attributes: {
+				label,
+				description,
+				options
+			},
+			unique
 		});
 		setOutput('form', parsed);
 	} catch (error) {

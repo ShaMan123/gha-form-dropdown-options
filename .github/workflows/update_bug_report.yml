@@ -49,6 +49,7 @@ jobs:
       long2: ${{ steps.long2.outputs.result }}
       dates: ${{ steps.dates.outputs.result }}
       year_end: ${{ steps.year_end.outputs.result }}
+      timestamp: ${{ steps.timestamp.outputs.value }}
     steps:
       - name: Setting branch for committing
         # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#setting-an-environment-variable
@@ -129,6 +130,9 @@ jobs:
             }
             const jan1 = new Date(new Date().getFullYear() + 1, 0, 1)
             return new Array(Math.floor((jan1 - new Date()) / dayMs)).fill(0).map((_, i) => format(i + 1));
+      - name: Timestamp
+        id: timestamp
+        run: echo "::set-output name=value::$(date +'%Y-%m-%d %H:%M:%S') "
   update-bug-report:
     name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
@@ -206,6 +210,16 @@ jobs:
           dropdown: year_end
           options: ${{ needs.pre.outputs.year_end }}
           commit_message: 'chore(): update long report / year_end dropdown'
+          dry_run: no-push
+      - name: Dynamic Substitution
+        uses: ./
+        with:
+          # passing template again for testing
+          template: .github/template_report.yml
+          form: .github/ISSUE_TEMPLATE/long_report.yml
+          dropdown: $subs
+          options: '{{...}},${{ needs.pre.outputs.timestamp }}'
+          description: '{...}\nUpdated ${{ needs.pre.outputs.timestamp }}'
           dry_run: no-push
       - name: Commit & PR
         uses: peter-evans/create-pull-request@v4.1.3

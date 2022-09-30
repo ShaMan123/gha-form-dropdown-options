@@ -27,25 +27,54 @@ inputs:
     type: string
     required: true
   dropdown:
-    description: The id of the dropdown in the yaml form to populate options into
+    description: |
+      The id of the dropdown in the yaml form to populate options into
+      Prefix the id with the value of `id_prefix`, see `strategy` for more details
     type: string
     required: true
   options:
-    description: A stringified array of options
+    description: |
+      A stringified array of options
+      Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
   label:
     description: |
       The label of the dropdown
+      Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
   description:
     description: |
       The description of the dropdown
+      Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
+  unique:
+    description: |
+      Whether `options` should be unique
+    type: boolean
+    default: true
   commit_message:
     description: 'defaults to `chore(): update [REPORT_NAME]`'
     type: string
+  strategy:
+    description: |
+      The strategy used to determine if a dropdown is static or not.
+      The `empty-options` strategy determines if a dropdown is dynamic by checking if the template's options are empty.
+      The `id-prefix` strategy determines if a dropdown is dynamic or not by checking its id prefix depending on the value of `id_prefix`.
+      `id-prefix` is strict (throwing on failure) and allows more flexibility, such as dynamic substitution.
+      The `mixed` strategy uses both but is fail safe.
+    type: choice
+    default: mixed
+    options:
+      - id-prefix
+      - empty-options
+      - mixed
+  id_prefix:
+    description: |
+      The prefix used by `strategy` to determine if a dropdown is dynamic
+    type: string
+    default: '$'
   dry_run:
     description: |
       Pass `no-commit` to leave the git history untouched
@@ -88,6 +117,11 @@ runs:
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}
+        INPUT_LABEL: ${{ inputs.label }}
+        INPUT_DESCRIPTION: ${{ inputs.description }}
+        INPUT_UNIQUE: ${{ inputs.unique }}
+        INPUT_STRATEGY: ${{ inputs.strategy }}
+        INPUT_ID_PREFIX: ${{ inputs.id_prefix }}
     - name: Commit & Push
       id: commit
       run: |

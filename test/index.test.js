@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readYAMLFile } from '../src/util.js';
+import { readYAMLFile, isDynamicDropdown } from '../src/util.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -33,16 +33,25 @@ function assertForm(
 	message = 'output should match'
 ) {
 	const stdout = cp
-		.execSync('node dist/main.cjs', {
-			env: { ...process.env, ...parseInputs(inputs) }
+		.execSync('node --require source-map-support/register dist/main.cjs', {
+			env: {
+				...process.env,
+				...parseInputs({
+					strategy: 'mixed',
+					id_prefix: '$',
+					unique: true,
+					...inputs
+				})
+			}
+			// stdio: 'inherit'
 		})
 		.toString();
+
 	const outputLog = stdout
 		.replace(/\\r\\n/gm, '')
 		.match(/::set-output name=form::(.*)/g)[0];
 	const output = JSON.parse(outputLog.replace('::set-output name=form::', ''));
-	const logs = stdout.replace(outputLog, '').trim();
-	logs && console.log(logs);
+	!process.env.CI && console.log(stdout);
 	assertYAMLIsEqual(actualPath, expectedPath, message);
 	assert.deepStrictEqual(
 		output,
@@ -54,30 +63,149 @@ function assertForm(
 describe('action', function () {
 	const expected = path.resolve(__dirname, 'expected.yml');
 	const template = path.resolve(__dirname, 'template.yml');
-	const test = path.resolve(__dirname, 'temp.yml');
+	const test = path.resolve(__dirname, 'test.yml');
 	this.timeout(5000);
+	let preserveTemp = false;
+	function prepareTest(testTemplate = template) {
+		fs.writeFileSync(test, fs.readFileSync(testTemplate));
+		assert.equal(
+			fs.readFileSync(test).toString(),
+			fs.readFileSync(testTemplate).toString(),
+			'should prepare test'
+		);
+	}
+	function keepOutput() {
+		preserveTemp = true;
+	}
 	this.beforeAll(() => {
 		// https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 		dotenv.config();
 	});
-	this.beforeEach(() => {
-		fs.writeFileSync(test, fs.readFileSync(template));
-		assert.equal(
-			fs.readFileSync(test).toString(),
-			fs.readFileSync(template).toString(),
-			'should prepare test'
-		);
-	});
 	this.afterEach(() => {
-		fs.unlinkSync(test);
-		assert.ok(!fs.existsSync(test), 'should cleanup test');
+		if (!preserveTemp) {
+			fs.existsSync(test) && fs.unlinkSync(test);
+			assert.ok(!fs.existsSync(test), 'should cleanup test');
+		}
+		preserveTemp = false;
 	});
 
-	it('passing options', async function () {
+	describe('strategy', function () {
+		it('safety', function () {
+			assert.throws(
+				() =>
+					isDynamicDropdown(
+						{
+							id: 'dropdown',
+							attributes: {
+								options: []
+							}
+						},
+						{
+							strategy: 'id_prefix',
+							prefix: '$'
+						}
+					),
+				'should throw Unknown strategy'
+			);
+		});
+		it('id-prefix', function () {
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: '$dropdown',
+						attributes: {
+							options: []
+						}
+					},
+					{
+						strategy: 'id-prefix',
+						prefix: '$'
+					}
+				)
+			);
+			assert.ok(
+				!isDynamicDropdown(
+					{
+						id: 'dropdown',
+						attributes: {
+							options: ['a']
+						}
+					},
+					{
+						strategy: 'id-prefix',
+						prefix: '$'
+					}
+				)
+			);
+		});
+		it('empty-options', function () {
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: 'dropdown',
+						attributes: {
+							options: []
+						}
+					},
+					{
+						strategy: 'empty-options',
+						prefix: '$'
+					}
+				)
+			);
+			assert.ok(
+				!isDynamicDropdown(
+					{
+						id: '$dropdown',
+						attributes: {
+							options: ['a']
+						}
+					},
+					{
+						strategy: 'empty-options',
+						prefix: '$'
+					}
+				)
+			);
+		});
+		it('mixed', function () {
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: 'dropdown',
+						attributes: {
+							options: []
+						}
+					},
+					{
+						strategy: 'mixed',
+						prefix: '$'
+					}
+				)
+			);
+			assert.ok(
+				isDynamicDropdown(
+					{
+						id: '$dropdown',
+						attributes: {
+							options: ['a']
+						}
+					},
+					{
+						strategy: 'mixed',
+						prefix: '$'
+					}
+				)
+			);
+		});
+	});
+
+	it('passing options', function () {
+		prepareTest();
 		assertForm(
 			{
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
@@ -85,11 +213,12 @@ describe('action', function () {
 		);
 	});
 
-	it('passing attributes', async function () {
+	it('passing attributes', function () {
+		prepareTest();
 		assertForm(
 			{
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				label: 'pip',
 				description: 'foo bar',
 				options: ['1.2.3', '4.5.6', '7.8.9']
@@ -99,7 +228,25 @@ describe('action', function () {
 		);
 	});
 
-	it.skip('TODO: keeps comments', async function () {
+	it('trying to edit a non existing dropdown', function () {
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: 'version',
+						options: ['1.2.3', '4.5.6', '7.8.9']
+					},
+					test,
+					expected
+				),
+			'should throw not found'
+		);
+	});
+
+	it.skip('TODO: keeps comments', function () {
+		prepareTest();
 		try {
 			cp.execSync(
 				'git diff --no-index test/template.yml test/expected.yml -w -b -B -I ^s*- -R  --src-prefix ./ --dst-prefix ./ > test/diff.txt',
@@ -117,29 +264,118 @@ describe('action', function () {
 		assert.equal(diff, '', 'diff should be empty');
 	});
 
-	it('using a template', async function () {
-		fs.unlinkSync(test);
+	it('trying to edit a static dropdown - no built form', function () {
+		const template = path.resolve(__dirname, 'template2.yml');
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
-		assertForm(
-			{
-				template,
-				form: test,
-				dropdown: 'version',
-				options: ['1.2.3', '4.5.6', '7.8.9']
-			},
-			test,
-			expected
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
+						strategy: 'empty-options'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
+						strategy: 'id-prefix',
+						id_prefix: '#'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
 		);
 	});
 
-	it('using a template in multiple steps', async function () {
-		fs.unlinkSync(test);
+	it('trying to edit a static dropdown - built form', function () {
+		const template = path.resolve(__dirname, 'template2.yml');
+		prepareTest(template);
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
+						strategy: 'empty-options'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+		assert.throws(
+			() =>
+				assertForm(
+					{
+						template,
+						form: test,
+						dropdown: '$version',
+						options: ['1.2.3', '4.5.6', '7.8.9'],
+						description: '{...}\nUpdated',
+						strategy: 'id-prefix',
+						id_prefix: '#'
+					},
+					test,
+					expected
+				),
+			'should throw when trying to edit a static dropdown'
+		);
+	});
+
+	it('using a template with substitution', function () {
+		const template = path.resolve(__dirname, 'template2.yml');
 		assert.ok(!fs.existsSync(test), 'should cleanup test file');
 		assertForm(
 			{
 				template,
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
+				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}', '{...}'],
+				description: '{...}\nUpdated',
+				unique: false
+			},
+			test,
+			path.resolve(__dirname, 'subs.yml')
+		);
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: '$version',
+				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}'],
+				description: '{{...}}\nUpdated',
+				unique: false
+			},
+			test,
+			path.resolve(__dirname, 'subs2.yml')
+		);
+	});
+
+	it('using a template in multiple steps', function () {
+		assert.ok(!fs.existsSync(test), 'should cleanup test file');
+		assertForm(
+			{
+				template,
+				form: test,
+				dropdown: '$version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,
@@ -170,7 +406,7 @@ describe('action', function () {
 		);
 	});
 
-	it('editing a template', async function () {
+	it('editing a template', function () {
 		const dist = path.resolve(__dirname, 'dist.yml');
 		fs.writeFileSync(test, fs.readFileSync(dist));
 		assertYAMLIsEqual(test, dist, 'should prepare test');
@@ -178,7 +414,7 @@ describe('action', function () {
 			{
 				template,
 				form: test,
-				dropdown: 'version',
+				dropdown: '$version',
 				options: ['1.2.3', '4.5.6', '7.8.9']
 			},
 			test,

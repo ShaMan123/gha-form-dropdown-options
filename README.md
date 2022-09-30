@@ -19,33 +19,137 @@ Replace the `uses: ./` directive to point to [![published action](https://img.sh
 
 Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
 
-## Using a Template
+## Live 🚀
+
+This repo uses the action it defines.
+
+- Take a look at the dropdowns populated into the [issue template](../../issues/new?template=bug_report.yml) using [this workflow](.github/workflows/update_bug_report.yml).
+- Take a closer look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml), see [Templates](#templates).
+- And don't forget to checkout [PR #5](../../pull/5), for more information refer to [Creating a PR](#creating-a-pr).
+- View the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
+
+## Advanced Usage
+
+### Templates
 
 The `template` option introduces a _build_ step, sort of speaking.
+It reads the `template` and outputs a generated file using `inputs.form`.
+This means that you shouldn't edit the built form, as you wouldn't edit a build file.
 
-The action will use the `template` to build the form as follows:
+The action will use `template` to build the form as follows:
 
-- Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart,
-  assuming that a dropdown with empty options will be handled by an action.
-  See an example [commit](https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598).
-- Dynamic dropdowns are persisted in order to enable updating a form from multiple runs.
-- Update the inputted dropdown
-
-This means that you shouldn't edit the built form ever, as you wouldn't edit a build file.
-
-This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
-It might change to a stricter approach in the future using id prefixing.
+- Parse `template`
+- For each dropdown:
+  - Determine if dropdown is static using `inputs.strategy`.
+  - Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart.\
+    See an example [commit](https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598).
+  - Dynamic dropdowns are persisted from the built file in order to enable updating parts of a form from multiple runs.
+- Set `inputs.options`
+- Write `form`
 
 Using a `template` is **suggested** for the following:
 
 - Preserving comments: Parsing the yaml file will loose all comments
 - DX: Maintaining forms with long dropdown options
+- [Dynamic Substitution](#dynamic-substitution)
 
-It is suggested using the template option once, in the first step updating the form, and omitting it afterwards.
+### Dynamic Substitution
 
-Take a look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml) ad refer to [Live](#live).
+- `{...}` : will populate the value from `template` if existing
+- `{{...}}` : will populate the previous value from `form` if existing.
 
-## Conflicting Runs
+<details><summary>Dynamic Substitution Flow</summary>
+
+**template.yml**
+
+```yaml template.yml
+    ...
+    - type: dropdown
+      id: $dropdown
+      description: 'template says: {...}, build says: ...'
+      options:
+        - a
+    ...
+```
+
+**workflow.yml**
+
+```yaml workflow.yml
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: {...}, build says: ...'
+      options: {...}, b
+    ...
+```
+
+**build.yml #1**
+
+```yaml build.yml #1
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: template says: {...}, build says: ..., build says: ...'
+      options:
+        - a
+        - b
+    ...
+```
+
+**workflow.yml**
+
+```yaml workflow.yml
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: {{...}}, build says: ...'
+      options: {{...}}, c
+    ...
+```
+
+**build.yml #2**
+
+```yaml build.yml #2
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: template says: template says: {...}, build says: ..., build says: ..., build says: ...'
+      options:
+        - a
+        - b
+        - c
+    ...
+```
+
+**workflow.yml**
+
+```yaml workflow.yml
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: {{...}} but build says: ...'
+      options: {...}, d
+    ...
+```
+
+**build.yml #3**
+
+```yaml build.yml #3
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: template says: template says: template says: {...}, build says: ..., build says: ..., build says: ... but build says: ...'
+      options:
+        - a
+        - d
+    ...
+```
+
+</details>
+
+Take a look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml) for a live example.
+
+### Conflicting Runs
 
 Since workflows run in concurrency you may encounter a case in which a number of runs are trying to modify and commit the same file.\
 This might result in a merge conflict.\
@@ -57,16 +161,10 @@ Modifying a label more than once in a short period of time (before the previous 
 
 Consider handling failures in a consequent step or use the `dry_run` option to prevent the action from trying to commit in the first place and handle that yourself.
 
-## Creating a PR
+### Creating a PR
 
 Consider using [![create-pull-request](https://img.shields.io/github/v/release/peter-evans/create-pull-request?label=peter-evans%2Fcreate-pull-request&sort=semver)](https://github.com/marketplace/actions/create-pull-request) in order to commit changes in an orderly and safe fashion to a generated PR.
 
 Refer to the `update-long-report` job in [this workflow](.github/workflows/update_bug_report.yml) to see a usage example and to [PR #5](../../pull/5).\
 Don't forget to use the `dry_run` option.
 
-## Live
-
-This repo uses the action it defines 🚀.\
-Take a look at the dropdowns populated into the [issue template](../../issues/new?template=bug_report.yml) using [this workflow](.github/workflows/update_bug_report.yml).
-
-See the [bot](../../commits?author=github-actions%5Bbot%5D) in action.

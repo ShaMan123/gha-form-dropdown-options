@@ -1,15 +1,15 @@
 name: 🧪 Test Form
 title: 🧪 Test Form
 body:
+  # a comment
   - type: dropdown
     id: $version
     attributes:
-      label: version
       description: Package version
+      label: version
       options:
-        - 1.2.3
-        - 4.5.6
-        - 7.8.9
+        - x
+        - x1
     validations:
       required: true
   - type: dropdown
@@ -18,7 +18,7 @@ body:
       label: should be cleared
       options:
         -
-        -
+        - null
     validations:
       required: true
   - type: dropdown
@@ -36,6 +36,6 @@ body:
         - u
         - v
         -
-        -
+        - null
     validations:
       required: true
