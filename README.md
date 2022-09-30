@@ -19,6 +19,15 @@ Replace the `uses: ./` directive to point to [![published action](https://img.sh
 
 Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
 
+## Live 🚀
+
+This repo uses the action it defines.
+
+- Take a look at the dropdowns populated into the [issue template](../../issues/new?template=bug_report.yml) using [this workflow](.github/workflows/update_bug_report.yml).
+- Take a closer look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml), see [Templates](#templates).
+- And don't forget to checkout [PR #5](../../pull/5), for more information refer to [Creating a PR](#creating-a-pr).
+- View the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
+
 ## Advanced Usage
 
 ### Templates
@@ -32,7 +41,7 @@ The action will use `template` to build the form as follows:
 - Parse `template`
 - For each dropdown:
   - Determine if dropdown is static using `inputs.strategy`.
-  - Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart.
+  - Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart.\
     See an example [commit](https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598).
   - Dynamic dropdowns are persisted from the built file in order to enable updating parts of a form from multiple runs.
 - Set `inputs.options`
@@ -136,9 +145,9 @@ Using a `template` is **suggested** for the following:
     ...
 ```
 
-</detail>
+</details>
 
-Take a look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml) ad refer to [Live](#live).
+Take a look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml) for a live example.
 
 ### Conflicting Runs
 
@@ -159,9 +168,3 @@ Consider using [![create-pull-request](https://img.shields.io/github/v/release/p
 Refer to the `update-long-report` job in [this workflow](.github/workflows/update_bug_report.yml) to see a usage example and to [PR #5](../../pull/5).\
 Don't forget to use the `dry_run` option.
 
-## Live
-
-This repo uses the action it defines 🚀.\
-Take a look at the dropdowns populated into the [issue template](../../issues/new?template=bug_report.yml) using [this workflow](.github/workflows/update_bug_report.yml).
-
-See the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
