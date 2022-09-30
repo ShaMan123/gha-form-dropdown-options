@@ -5,6 +5,8 @@ import { DEFAULT_SCHEMA, types, dump, load } from 'js-yaml';
 types.null.defaultStyle = 'empty';
 const schema = DEFAULT_SCHEMA;
 
+const RE = '${...}';
+
 export function parseYAML(input) {
 	return load(input, { schema });
 }
@@ -21,7 +23,59 @@ export function writeYAMLFile(file, data) {
 	fs.writeFileSync(file, stringifyYAML(data));
 }
 
-function readYAML(file, template) {
+function isStaticDropdownEmptyOptions(dropdown) {
+	const {
+		attributes: { options }
+	} = dropdown;
+	if (
+		!options ||
+		!options.length ||
+		(Array.isArray(options) && options.every((option) => !option))
+	) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function isStaticDropdownIdPrefix(dropdown, inputs) {
+	const { id } = dropdown;
+	const startWithStatic =
+		id.startWith(inputs.prefixStatic) && inputs.prefixStatic;
+	const startWithNotStatic = id.startWith(inputs.prefix) && inputs.prefix;
+	console.log(startWithStatic, startWithNotStatic);
+	if (startWithStatic && !startWithNotStatic) {
+		return true;
+	} else if (!startWithStatic && startWithNotStatic) {
+		return false;
+	} else {
+		return null;
+	}
+}
+
+function isStaticDropdown(dropdown, strategy) {
+	switch (strategy.strategy) {
+		case 'id-prefix':
+			const isStatic = isStaticDropdownIdPrefix(dropdown, strategy);
+			if (isStatic === null) {
+				throw new Error(
+					`Failed to determine if dropdown '${dropdown.id}' is static using the prefixes [${inputs.prefixStatic}, ${inputs.prefix}]`
+				);
+			}
+			return isStatic;
+		case 'empty-options':
+			return isStaticDropdownEmptyOptions(dropdown);
+		case 'mixed':
+			return (
+				isStaticDropdownIdPrefix(dropdown, strategy) ||
+				isStaticDropdownEmptyOptions(dropdown)
+			);
+		default:
+			throw new Error(`Unknown strategy '${strategy}'`);
+	}
+}
+
+function readYAML(file, template, strategy) {
 	if (template && fs.existsSync(file)) {
 		// avoid overriding existing options by prefilling template with actual form data
 		// avoid prefilling static dropdown (with populated options) in case the template has been updated
@@ -29,14 +83,7 @@ function readYAML(file, template) {
 		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
-			const {
-				attributes: { options }
-			} = entry;
-			if (
-				!options ||
-				!options.length ||
-				(Array.isArray(options) && options.every((option) => !option))
-			) {
+			if (!isStaticDropdown(entry, strategy)) {
 				templateContent.body[index].attributes.options =
 					content.body[index].attributes.options;
 			}
@@ -46,8 +93,14 @@ function readYAML(file, template) {
 	return readYAMLFile(template || file);
 }
 
-export function writeYAML(file, template, dropdownId, attributes) {
-	const content = readYAML(file, template);
+export function writeYAML({
+	form,
+	template,
+	dropdown: dropdownId,
+	attributes,
+	strategy
+}) {
+	const content = readYAML(form, template, strategy);
 	const found = content.body.find(
 		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
 	);
@@ -60,14 +113,21 @@ export function writeYAML(file, template, dropdownId, attributes) {
 	}
 	const compatAttributes = {};
 	for (const key in attributes) {
-		if (attributes[key]) {
-			// compatAttributes[key] =
-			// 	template &&
-			// 	(typeof found.attributes[key] === 'string' || !found.attributes[key])
-			// 		? attributes[key].replace('${...}', found.attributes[key])
-			// 		: attributes[key];
-			compatAttributes[key] = attributes[key];
+		let value = attributes[key];
+		const templateValue = found.attributes[key];
+		if (!value) continue;
+		if (template) {
+			if (typeof templateValue === 'string') {
+				value = value.replace(RE, templateValue);
+			} else if (Array.isArray(value) && Array.isArray(templateValue)) {
+				const out = [];
+				value.forEach((entry) =>
+					entry === RE ? out.push(...templateValue) : out.push(entry)
+				);
+				value = out;
+			}
 		}
+		compatAttributes[key] = value;
 	}
 	found.attributes = { ...found.attributes, ...compatAttributes };
 	let out = stringifyYAML(content);
@@ -80,6 +140,6 @@ export function writeYAML(file, template, dropdownId, attributes) {
 `;
 		out = `${HEADER}\n\n${out}`;
 	}
-	fs.writeFileSync(file, out);
+	fs.writeFileSync(form, out);
 	return content;
 }

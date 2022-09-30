@@ -19,6 +19,16 @@ export async function run() {
 			trimWhitespace: true,
 			required: true
 		});
+		const strategy = getInput('strategy', {
+			trimWhitespace: true,
+			required: true
+		});
+		const prefix = getInput('id_prefix', {
+			trimWhitespace: true
+		});
+		const prefixStatic = getInput('id_prefix_static', {
+			trimWhitespace: true
+		});
 		let options;
 		try {
 			options = JSON.parse(optionsInput);
@@ -31,10 +41,20 @@ export async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		const parsed = writeYAML(form, template, dropdownId, {
-			label,
-			description,
-			options
+		const parsed = writeYAML({
+			form,
+			template,
+			dropdown: dropdownId,
+			strategy: {
+				strategy,
+				prefix,
+				prefixStatic
+			},
+			attributes: {
+				label,
+				description,
+				options
+			}
 		});
 		setOutput('form', parsed);
 	} catch (error) {

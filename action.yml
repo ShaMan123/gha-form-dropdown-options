@@ -31,21 +31,48 @@ inputs:
     type: string
     required: true
   options:
-    description: A stringified array of options
+    description: |
+      A stringified array of options
+      When using a template it is possible to access the template's value using `${...}`
     type: string
     required: true
   label:
     description: |
       The label of the dropdown
+      When using a template it is possible to access the template's value using `${...}`
     type: string
   description:
     description: |
       The description of the dropdown
+      When using a template it is possible to access the template's value using `${...}`
     type: string
     required: true
   commit_message:
     description: 'defaults to `chore(): update [REPORT_NAME]`'
     type: string
+  strategy:
+    description: |
+      The strategy used to determine if a dropdown is static or not.
+      The `empty-options` strategy determines if a dropdown is static by checking if the template's options aren't empty.
+      The `id-prefix` strategy determines if a dropdown is static or not by checking its id prefix depending on `id_prefix`, `id_prefix_static`.
+      It is strict (throwing on failure) and allows more flexibility, e.g. concating template options and input options.
+      The `mixed` strategy uses both but is fail safe.
+    type: choice
+    default: mixed
+    options:
+      - id-prefix
+      - empty-options
+      - mixed
+  id_prefix:
+    description: |
+      The prefix used by `strategy` to determine if a dropdown is **not** static
+    type: string
+    default: '$'
+  id_prefix_static:
+    description: |
+      The prefix used by `strategy` to determine if a dropdown is static
+    type: string
+    default: ''
   dry_run:
     description: |
       Pass `no-commit` to leave the git history untouched
@@ -88,6 +115,11 @@ runs:
         INPUT_FORM: ${{ inputs.form }}
         INPUT_DROPDOWN: ${{ inputs.dropdown }}
         INPUT_OPTIONS: ${{ inputs.options }}
+        INPUT_LABEL: ${{ inputs.label }}
+        INPUT_DESCRIPTION: ${{ inputs.description }}
+        INPUT_STRATEGY: ${{ inputs.strategy }}
+        INPUT_ID_PREFIX: ${{ inputs.id_prefix }}
+        INPUT_ID_PREFIX_STATIC: ${{ inputs.id_prefix_static }}
     - name: Commit & Push
       id: commit
       run: |

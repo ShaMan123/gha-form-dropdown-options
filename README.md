@@ -22,26 +22,49 @@ Refer to the `inputs` and `outputs` definitions in the [spec](action.yml).
 ## Using a Template
 
 The `template` option introduces a _build_ step, sort of speaking.
+This means that you shouldn't edit the built form, as you wouldn't edit a build file.
 
-The action will use the `template` to build the form as follows:
+The action will use `template` to build the form as follows:
 
-- Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart,
-  assuming that a dropdown with empty options will be handled by an action.
-  See an example [commit](https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598).
-- Dynamic dropdowns are persisted in order to enable updating a form from multiple runs.
-- Update the inputted dropdown
-
-This means that you shouldn't edit the built form ever, as you wouldn't edit a build file.
-
-This behavior makes sense but could have been handled with ease if flagging dynamic dropdowns in forms was possible.
-It might change to a stricter approach in the future using id prefixing.
+- Parse `template`
+- For each dropdown:
+  - Determine if static using `inputs.strategy`
+  - Static dropdowns (dropdowns with populated options in the template) take precedence over their built counterpart,
+    See an example [commit](https://github.com/ShaMan123/gha-form-dropdown-options/pull/2/commits/7cbd904caccb60c9bf52f066d11b303e439fe598).
+  - Dynamic dropdowns are persisted from the built file in order to enable updating parts of a form from multiple runs.
+- Set `inputs.options`
 
 Using a `template` is **suggested** for the following:
 
 - Preserving comments: Parsing the yaml file will loose all comments
 - DX: Maintaining forms with long dropdown options
+- Concating options
 
-It is suggested using the template option once, in the first step updating the form, and omitting it afterwards.
+### Accessing template values
+
+```yaml template.yml
+    ...
+    - type: dropdown
+      id: $dropdown
+      description: 'template says: ${...} but build says: ...'
+    ...
+```
+
+```yaml workflow.yml
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: ${...} but build says: ...'
+    ...
+```
+
+```yaml build.yml
+    ...
+    with:
+      id: $dropdown
+      description: 'template says: template says: ${...} but build says: ... but build says: ...'
+    ...
+```
 
 Take a look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml) ad refer to [Live](#live).
 
