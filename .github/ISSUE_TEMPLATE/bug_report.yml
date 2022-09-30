@@ -31,7 +31,7 @@ body:
       label: Repository labels
       description: Fetched by action
       options:
-        - bots
+        - bot
         - bug
         - ci
         - documentation
