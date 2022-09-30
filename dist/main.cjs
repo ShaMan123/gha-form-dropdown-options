@@ -6455,6 +6455,8 @@ var types = {
 types.null.defaultStyle = 'empty';
 const schema = DEFAULT_SCHEMA;
 
+const RE = '${...}';
+
 function parseYAML(input) {
 	return load(input, { schema });
 }
@@ -6467,7 +6469,38 @@ function readYAMLFile(file) {
 	return parseYAML(fs__default["default"].readFileSync(file).toString());
 }
 
-function readYAML(file, template) {
+function hasDropdownEmptyOptions(dropdown) {
+	const {
+		attributes: { options }
+	} = dropdown;
+	return (
+		!options ||
+		!options.length ||
+		(Array.isArray(options) && options.every((option) => !option))
+	);
+}
+
+function hasDropdownIdPrefix(dropdown, strategy) {
+	return dropdown.id.startsWith(strategy.prefix);
+}
+
+function isDynamicDropdown(dropdown, strategy) {
+	switch (strategy.strategy) {
+		case 'id-prefix':
+			return hasDropdownIdPrefix(dropdown, strategy);
+		case 'empty-options':
+			return hasDropdownEmptyOptions(dropdown);
+		case 'mixed':
+			return (
+				hasDropdownIdPrefix(dropdown, strategy) ||
+				hasDropdownEmptyOptions(dropdown)
+			);
+		default:
+			throw new Error(`Unknown strategy '${strategy.strategy}'`);
+	}
+}
+
+function readYAML(file, template, strategy) {
 	if (template && fs__default["default"].existsSync(file)) {
 		// avoid overriding existing options by prefilling template with actual form data
 		// avoid prefilling static dropdown (with populated options) in case the template has been updated
@@ -6475,14 +6508,7 @@ function readYAML(file, template) {
 		const content = readYAMLFile(file);
 		templateContent.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
-			const {
-				attributes: { options }
-			} = entry;
-			if (
-				!options ||
-				!options.length ||
-				(Array.isArray(options) && options.every((option) => !option))
-			) {
+			if (isDynamicDropdown(entry, strategy)) {
 				templateContent.body[index].attributes.options =
 					content.body[index].attributes.options;
 			}
@@ -6492,8 +6518,14 @@ function readYAML(file, template) {
 	return readYAMLFile(template || file);
 }
 
-function writeYAML(file, template, dropdownId, attributes) {
-	const content = readYAML(file, template);
+function writeYAML({
+	form,
+	template,
+	dropdown: dropdownId,
+	attributes,
+	strategy
+}) {
+	const content = readYAML(form, template, strategy);
 	const found = content.body.find(
 		(entry) => entry.id === dropdownId && entry.type === 'dropdown'
 	);
@@ -6506,14 +6538,21 @@ function writeYAML(file, template, dropdownId, attributes) {
 	}
 	const compatAttributes = {};
 	for (const key in attributes) {
-		if (attributes[key]) {
-			// compatAttributes[key] =
-			// 	template &&
-			// 	(typeof found.attributes[key] === 'string' || !found.attributes[key])
-			// 		? attributes[key].replace('${...}', found.attributes[key])
-			// 		: attributes[key];
-			compatAttributes[key] = attributes[key];
+		let value = attributes[key];
+		const templateValue = found.attributes[key];
+		if (!value) continue;
+		if (template) {
+			if (typeof templateValue === 'string') {
+				value = value.replace(RE, templateValue);
+			} else if (Array.isArray(value) && Array.isArray(templateValue)) {
+				const out = [];
+				value.forEach((entry) =>
+					entry === RE ? out.push(...templateValue) : out.push(entry)
+				);
+				value = out;
+			}
 		}
+		compatAttributes[key] = value;
 	}
 	found.attributes = { ...found.attributes, ...compatAttributes };
 	let out = stringifyYAML(content);
@@ -6526,7 +6565,7 @@ function writeYAML(file, template, dropdownId, attributes) {
 `;
 		out = `${HEADER}\n\n${out}`;
 	}
-	fs__default["default"].writeFileSync(file, out);
+	fs__default["default"].writeFileSync(form, out);
 	return content;
 }
 
@@ -6548,6 +6587,14 @@ async function run() {
 			trimWhitespace: true,
 			required: true
 		});
+		const strategy = coreExports.getInput('strategy', {
+			trimWhitespace: true,
+			required: true
+		});
+		const prefix = coreExports.getInput('id_prefix', {
+			trimWhitespace: true,
+			required: true
+		});
 		let options;
 		try {
 			options = JSON.parse(optionsInput);
@@ -6560,10 +6607,19 @@ async function run() {
 				.map((value) => value.trim())
 				.filter((value) => !!value);
 		}
-		const parsed = writeYAML(form, template, dropdownId, {
-			label,
-			description,
-			options
+		const parsed = writeYAML({
+			form,
+			template,
+			dropdown: dropdownId,
+			strategy: {
+				strategy,
+				prefix
+			},
+			attributes: {
+				label,
+				description,
+				options
+			}
 		});
 		coreExports.setOutput('form', parsed);
 	} catch (error) {
@@ -6573,3 +6629,4 @@ async function run() {
 }
 
 run();
+//# sourceMappingURL=main.cjs.map
