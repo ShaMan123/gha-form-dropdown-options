@@ -138,7 +138,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ needs.pre.outputs.branch }}
-      - name: Update branches without committing
+      - name: Update branches
         id: branches
         uses: ./
         with:
@@ -149,7 +149,7 @@ jobs:
       - name: Bug report modified? ${{ steps.branches.outputs.modified }}
         run: |
 
-      - name: Update labels without committing
+      - name: Update labels
         id: labels
         uses: ./
         with:
@@ -168,7 +168,7 @@ jobs:
           dropdown: dates
           options: ${{ needs.pre.outputs.dates }}
           commit_message: 'chore(): update bug report'
-      - name: Bug report committed? ${{ steps.commit.outputs.pushed }}
+      - name: Pushed? ${{ steps.commit.outputs.pushed }}
         run: |
 
   update-long-report:
