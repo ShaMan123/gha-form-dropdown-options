@@ -39,6 +39,7 @@ function assertForm(
 				...parseInputs({
 					strategy: 'mixed',
 					id_prefix: '$',
+					unique: true,
 					...inputs
 				})
 			}
@@ -348,7 +349,8 @@ describe('action', function () {
 				form: test,
 				dropdown: '$version',
 				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}', '{...}'],
-				description: '{...}\nUpdated'
+				description: '{...}\nUpdated',
+				unique: false
 			},
 			test,
 			path.resolve(__dirname, 'subs.yml')
@@ -359,7 +361,8 @@ describe('action', function () {
 				form: test,
 				dropdown: '$version',
 				options: ['1.2.3', '{...}', '4.5.6', '7.8.9', '{{...}}'],
-				description: '{{...}}\nUpdated'
+				description: '{{...}}\nUpdated',
+				unique: false
 			},
 			test,
 			path.resolve(__dirname, 'subs2.yml')

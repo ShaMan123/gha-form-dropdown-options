@@ -19,6 +19,10 @@ export async function run() {
 			trimWhitespace: true,
 			required: true
 		});
+		const unique = getInput('unique', {
+			trimWhitespace: true,
+			required: true
+		});
 		const strategy = getInput('strategy', {
 			trimWhitespace: true,
 			required: true
@@ -51,7 +55,8 @@ export async function run() {
 				label,
 				description,
 				options
-			}
+			},
+			unique
 		});
 		setOutput('form', parsed);
 	} catch (error) {

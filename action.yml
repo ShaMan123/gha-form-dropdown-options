@@ -48,6 +48,12 @@ inputs:
       Supports substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
+  unique:
+    description: |
+      Whether `options` should be unique
+    type: boolean
+    default: true
+    required: true
   commit_message:
     description: 'defaults to `chore(): update [REPORT_NAME]`'
     type: string

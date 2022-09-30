@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { DEFAULT_SCHEMA, dump, load, types } from 'js-yaml';
-import cloneDeep from 'lodash.clonedeep';
+import _ from 'lodash';
 
 // configure null to be stringified to ''
 types.null.defaultStyle = 'empty';
@@ -66,7 +66,7 @@ function readYAML(file, template, strategy) {
 		// avoid prefilling static dropdown (with populated options) in case the template has been updated
 		const build = readYAMLFile(file);
 		const templateContent = readYAMLFile(template);
-		const content = cloneDeep(templateContent);
+		const content = _.cloneDeep(templateContent);
 		content.body.forEach((entry, index) => {
 			if (entry.type !== 'dropdown') return;
 			if (isDynamicDropdown(entry, strategy)) {
@@ -81,7 +81,7 @@ function readYAML(file, template, strategy) {
 		};
 	} else {
 		const templateContent = readYAMLFile(template);
-		const content = cloneDeep(templateContent);
+		const content = _.cloneDeep(templateContent);
 		return { content, template: templateContent };
 	}
 }
@@ -97,7 +97,8 @@ export function writeYAML({
 	template: templateId,
 	dropdown: dropdownId,
 	attributes,
-	strategy
+	strategy,
+	unique
 }) {
 	const { content, template, build } = readYAML(form, templateId, strategy);
 	const dropdown = findDropdown(content, dropdownId);
@@ -129,7 +130,6 @@ export function writeYAML({
 		const templateAttr = (templateDropdown?.attributes || {})[key];
 		if (!attr) continue;
 		if (typeof attr === 'string') {
-			console.log(prevAttr, template);
 			attr = attr
 				.replace(RE_NEST, prevAttr || '')
 				.replace(RE, templateAttr || '');
@@ -147,7 +147,14 @@ export function writeYAML({
 		}
 		compatAttributes[key] = attr;
 	}
-	dropdown.attributes = { ...dropdown.attributes, ...compatAttributes };
+	const merged = {
+		...dropdown.attributes,
+		...compatAttributes
+	};
+	if (unique) {
+		merged.options = _.uniq(merged.options);
+	}
+	dropdown.attributes = merged;
 	let out = stringifyYAML(content);
 	if (template) {
 		const HEADER = `
