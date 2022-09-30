@@ -81,20 +81,6 @@ inputs:
     options:
       - no-commit
       - no-push
-  nested:
-    dry_run:
-      description: |
-        Pass `no-commit` to leave the git history untouched
-        Pass `no-push` to disable pushing the commit if it exists
-      type: choice
-      options:
-        - no-commit
-        - no-push
-    id_prefix_static:
-      description: |
-        The prefix used by `strategy` to determine if a dropdown is static
-      type: string
-      default: ''
 
 # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
