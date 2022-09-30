@@ -34,18 +34,18 @@ inputs:
     required: true
   options:
     description: |
-      A stringified array of options and the special substitution templates: `{...}`, `{{...}}`
+      A stringified array of options and the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
   label:
     description: |
       The label of the dropdown
-      Supports substitution templates: `{...}`, `{{...}}`
+      Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
   description:
     description: |
       The description of the dropdown
-      Supports substitution templates: `{...}`, `{{...}}`
+      Supports the dynamic substitution templates: `{...}`, `{{...}}`
     type: string
     required: true
   unique:
