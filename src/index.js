@@ -35,7 +35,7 @@ export async function run() {
 			getInput('dry_run', {
 				trimWhitespace: true
 			}) === 'no-write';
-		console.log(noWrite);
+
 		let options;
 		try {
 			options = JSON.parse(optionsInput);
