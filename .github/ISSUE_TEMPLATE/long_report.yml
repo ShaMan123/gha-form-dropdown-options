@@ -1055,7 +1055,9 @@ body:
     id: year_end
     attributes:
       label: Updating in a PR
-      description: Generated
+      description: >-
+        [Creating a
+        PR](https://github.com/ShaMan123/gha-form-dropdown-options#creating-a-pr)
       options:
         - 
     validations:
@@ -1064,7 +1066,9 @@ body:
     id: $subs
     attributes:
       label: Recursive
-      description: Uses [Dynamic Substitution]()
+      description: >-
+        Uses [Dynamic
+        Substitution](https://github.com/ShaMan123/gha-form-dropdown-options#dynamic-substitution)
       options:
         - 2022-09-27T00:00:00.000Z
         - 2022-09-28T00:00:00.000Z
