@@ -21,7 +21,7 @@ body:
       description: Fetched by action
       options:
         - bash
-        - ci-update-long-report
+        - ci-update-long-report!
         - main
         - safeguard
     validations:
@@ -51,13 +51,13 @@ body:
       label: Updating Dates
       description: Choose a day next week
       options:
+        - '2022-10-06'
         - '2022-10-07'
         - '2022-10-08'
         - '2022-10-09'
         - '2022-10-10'
         - '2022-10-11'
         - '2022-10-12'
-        - '2022-10-13'
     validations:
       required: true
   - type: textarea
