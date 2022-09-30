@@ -23,9 +23,9 @@ Checkout [![issue-forms-version-dropdown](https://img.shields.io/github/v/tag/Sh
 This repo uses the action it defines.
 
 - Take a look at the dropdowns populated into the [issue template](../../issues/new?template=bug_report.yml) using [this workflow](.github/workflows/update_bug_report.yml).
-- Take a closer look at the [template file](./.github/template_report.yml) used to generate the [built file](./.github/ISSUE_TEMPLATE/long_report.yml), see [Templates](#templates).
-- And don't forget to checkout [PR #5](../../pull/5), for more information refer to [Creating a PR](#creating-a-pr).
-- View the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
+- Take a closer look at the [template file](./.github/template_report.yml) used to generate [`long_report.yml`](./.github/ISSUE_TEMPLATE/long_report.yml), see [Templates](#templates).
+- Don't forget to checkout [#5](../../pull/5). Refer to [Creating a PR](#creating-a-pr) for more information.
+- And you can view the [bot](../../commits?author=github-actions%5Bbot%5D) in action.
 
 ## Advanced Usage
 
