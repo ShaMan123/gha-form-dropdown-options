@@ -2,7 +2,7 @@ name: 🧪 Test Form
 title: 🧪 Test Form
 body:
   - type: dropdown
-    id: $version
+    id: _version
     attributes:
       label: pip
       description: foo bar

@@ -73,7 +73,7 @@ inputs:
     description: |
       The prefix used by `strategy` to determine if a dropdown is dynamic
     type: string
-    default: '$'
+    default: _
   dry_run:
     description: |
       Pass `no-write` to leave `form` untouched
