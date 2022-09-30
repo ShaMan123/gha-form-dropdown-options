@@ -118,6 +118,7 @@ runs:
         INPUT_OPTIONS: ${{ inputs.options }}
         INPUT_LABEL: ${{ inputs.label }}
         INPUT_DESCRIPTION: ${{ inputs.description }}
+        INPUT_UNIQUE: ${{ inputs.unique }}
         INPUT_STRATEGY: ${{ inputs.strategy }}
         INPUT_ID_PREFIX: ${{ inputs.id_prefix }}
     - name: Commit & Push
