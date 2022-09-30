@@ -220,7 +220,6 @@ jobs:
           dropdown: $subs
           options: '{{...}},${{ needs.pre.outputs.timestamp }}'
           description: '{...}\nUpdated ${{ needs.pre.outputs.timestamp }}'
-          commit_message: 'chore(): update long report / timestamp'
           dry_run: no-push
       - name: Commit & PR
         uses: peter-evans/create-pull-request@v4.1.3
