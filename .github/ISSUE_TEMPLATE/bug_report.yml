@@ -50,13 +50,13 @@ body:
       label: Updating Dates
       description: Choose a day next week
       options:
-        - '2022-11-15'
         - '2022-11-16'
         - '2022-11-17'
         - '2022-11-18'
         - '2022-11-19'
         - '2022-11-20'
         - '2022-11-21'
+        - '2022-11-22'
     validations:
       required: true
   - type: textarea
