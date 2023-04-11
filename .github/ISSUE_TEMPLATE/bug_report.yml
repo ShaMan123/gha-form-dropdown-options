@@ -50,13 +50,13 @@ body:
       label: Updating Dates
       description: Choose a day next week
       options:
-        - 2023-4-17
         - 2023-4-18
         - 2023-4-19
         - 2023-4-20
         - 2023-4-21
         - 2023-4-22
         - 2023-4-23
+        - 2023-4-24
     validations:
       required: true
   - type: textarea
