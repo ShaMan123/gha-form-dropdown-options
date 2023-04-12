@@ -9,6 +9,12 @@ inputs:
   github_token:
     description: Github token
     default: ${{ github.token }}
+  github_user:
+    description: Github user
+    default: github-actions[bot]
+  github_email:
+    description: Github email
+    default: github-actions[bot]@users.noreply.github.com
   template:
     description: |
       The location of the template file used to build the form, useful for ease of maintenance.
@@ -127,8 +133,8 @@ runs:
     - name: Commit & Push
       id: commit
       run: |
-        git config user.name github-actions[bot]
-        git config user.email github-actions[bot]@users.noreply.github.com
+        git config user.name ${{ inputs.github_user }}
+        git config user.email ${{ inputs.github_email }}
         PUSHED=false
         if [[ ${{ steps.process.outputs.modified }} == true ]] && [[ ${{ inputs.dry_run != 'no-commit' }} == true ]]; then
           echo "Committing ${{ inputs.form }}"
