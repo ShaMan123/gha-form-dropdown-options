@@ -134,7 +134,7 @@ jobs:
             return new Array(Math.floor((jan1 - new Date()) / dayMs)).fill(0).map((_, i) => format(i + 1));
       - name: Timestamp
         id: timestamp
-        run: echo "::set-output name=value::$(date +'%Y-%m-%d %H:%M:%S') "
+        run: echo "value=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
   update-bug-report:
     name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
