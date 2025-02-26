@@ -51,13 +51,13 @@ body:
       label: Updating Dates
       description: Choose a day next week
       options:
-        - 2025-3-04
         - 2025-3-05
         - 2025-3-06
         - 2025-3-07
         - 2025-3-08
         - 2025-3-09
         - 2025-3-10
+        - 2025-3-11
     validations:
       required: true
   - type: textarea
