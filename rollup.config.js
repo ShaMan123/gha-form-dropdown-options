@@ -8,7 +8,7 @@ export default {
 	output: {
 		file: 'dist/main.cjs',
 		format: 'cjs',
-		sourcemap: !process.env.CI
+		sourcemap: true
 	},
 	treeshake: true,
 	plugins: [
