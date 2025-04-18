@@ -22,8 +22,6 @@ body:
       options:
         - ci-update-long-report
         - main
-        - safeguard
-        - set-output
     validations:
       required: true
   - type: dropdown
