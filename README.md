@@ -166,3 +166,19 @@ Consider using [![create-pull-request](https://img.shields.io/github/v/release/p
 
 Refer to the `update-long-report` job in [this workflow](.github/workflows/update_bug_report.yml) to see a usage example and to [PR #5](../../pull/5).\
 Don't forget to use the `dry_run` option.
+
+## Developing
+
+```bash
+npm i
+npm start
+npm test
+```
+
+## Release
+
+Create a release after bumping a version and committing it:
+
+```
+npm version <major/minor/patch>
+```
