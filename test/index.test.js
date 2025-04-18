@@ -47,16 +47,29 @@ function assertForm(
 		})
 		.toString();
 
-	const outputLog = stdout
-		.replace(/\\r\\n/gm, '')
-		.match(/::set-output name=form::(.*)/g)[0];
-	const output = JSON.parse(outputLog.replace('::set-output name=form::', ''));
-	!process.env.CI && console.log(stdout);
+	let formOutput;
+	if (fs.existsSync(process.env.GITHUB_OUTPUT)) {
+		const ghaEnvFile = fs.readFileSync(process.env.GITHUB_OUTPUT).toString();
+		const entries = Object.fromEntries(
+			ghaEnvFile.split(/^ghadelimiter_.+\n/gm).map((entry) => {
+				const [header, body] = entry.split('\n');
+				return [header.split('<<')[0], body];
+			})
+		);
+		formOutput = entries.form;
+	} else {
+		formOutput = stdout
+			.replace(/\\r\\n/gm, '')
+			.match(/::set-output name=form::(.*)/g)[0]
+			.replace('::set-output name=form::', '');
+	}
+
+	assert(typeof formOutput === 'string', 'form output should be defined');
 	if (inputs.dry_run !== 'no-write') {
 		assertYAMLIsEqual(actualPath, expectedPath, message);
 	}
 	assert.deepStrictEqual(
-		output,
+		JSON.parse(formOutput),
 		readYAMLFile(expectedPath),
 		'should set outputs.form'
 	);
