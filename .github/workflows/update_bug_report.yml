@@ -69,7 +69,7 @@ jobs:
       - name: Get branches
         id: branches
         # https://github.com/actions/github-script
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           # https://octokit.github.io/rest.js
@@ -80,7 +80,7 @@ jobs:
               .then((res) => res.data.map((b) => b.name));
       - name: Get labels
         id: labels
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           # https://octokit.github.io/rest.js
@@ -91,21 +91,21 @@ jobs:
               .then((res) => res.data.map((l) => l.name));
       - name: Generate a long array
         id: long
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
             return new Array(500).fill(0).map((_, i) => `#${i + 1}`);
       - name: Generate another long array
         id: long2
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |
             return new Array(500).fill(0).map((_, i) => `#${i + 1}`).reverse();
       - name: Get next week
         id: dates
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           # unfortunately I didn't manage to import moment
           # https://github.com/actions/github-script/issues/275
@@ -120,7 +120,7 @@ jobs:
             return new Array(7).fill(0).map((_, i) => format(i + 7));
       - name: Get dates until end of year
         id: year_end
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const dayMs = 24 * 60 * 60 * 1000;
@@ -135,13 +135,14 @@ jobs:
       - name: Timestamp
         id: timestamp
         run: echo "value=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+
   update-bug-report:
     name: Update bug report on branch `${{ needs.pre.outputs.branch }}`
     runs-on: ubuntu-latest
     needs: pre
     if: contains(github.actor, 'github-actions') == false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.pre.outputs.branch }}
       - name: Update branches
@@ -174,6 +175,10 @@ jobs:
           dropdown: _dates
           options: ${{ needs.pre.outputs.dates }}
           dry_run: no-push
+      - name: lint
+        run: |
+          sudo apt-get install yamllint
+          yamllint .github/ISSUE_TEMPLATE/bug_report.yml
       - name: Pushed? ${{ steps.branches.outputs.modified || steps.labels.outputs.modified || steps.dates.outputs.modified  }}
         if: steps.branches.outputs.modified || steps.labels.outputs.modified || steps.dates.outputs.modified
         run: git push
@@ -184,7 +189,7 @@ jobs:
     needs: pre
     if: contains(github.actor, 'github-actions') == false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.pre.outputs.branch }}
       - name: Update long dropdown
@@ -224,6 +229,10 @@ jobs:
           options: '{{...}},${{ needs.pre.outputs.timestamp }}'
           description: '{...}\nUpdated ${{ needs.pre.outputs.timestamp }}'
           dry_run: no-push
+      - name: lint
+        run: |
+          sudo apt-get install yamllint
+          yamllint .github/ISSUE_TEMPLATE/long_report.yml
       - name: Commit & PR
         uses: peter-evans/create-pull-request@v7
         with:

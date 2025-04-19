@@ -27,3 +27,7 @@ jobs:
         run: npm test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: lint
+        run: |
+          sudo apt-get install yamllint
+          yamllint .
