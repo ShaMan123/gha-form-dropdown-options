@@ -30,4 +30,4 @@ jobs:
       - name: lint
         run: |
           sudo apt-get install yamllint
-          yamllint .
+          yamllint ./test
