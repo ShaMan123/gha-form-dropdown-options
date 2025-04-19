@@ -23,6 +23,7 @@ body:
       options:
         - ci-update-long-report
         - main
+        - yamllint
     validations:
       required: true
   - type: dropdown
