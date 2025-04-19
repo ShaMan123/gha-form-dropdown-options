@@ -1,3 +1,4 @@
+---
 name: 🐛 Bug Report
 description: File a bug report
 title: '[Bug]: '
@@ -10,7 +11,8 @@ body:
     id: terms
     attributes:
       label: CheckList
-      description: By submitting this issue, you agree to follow our [Code of Conduct]()
+      description: |
+        By submitting this issue, you agree to follow our [Code of Conduct]()
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true
@@ -64,8 +66,8 @@ body:
     attributes:
       label: Steps To Reproduce
       value: |
-        1. 
-        2. 
+        1.
+        2.
         3.
     validations:
       required: true

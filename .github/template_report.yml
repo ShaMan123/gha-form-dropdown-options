@@ -1,5 +1,5 @@
 name: 🐛🐛🐛🐛🐛🐛🐛 Bug Report
-description: A example of using template and build forms
+description: An example of using template and build forms
 title: '[Bug]: '
 body:
   - type: markdown
@@ -11,7 +11,8 @@ body:
     id: terms
     attributes:
       label: CheckList
-      description: By submitting this issue, you agree to follow our [Code of Conduct]()
+      description: |
+        By submitting this issue, you agree to follow our [Code of Conduct]()
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true
@@ -47,7 +48,8 @@ body:
     id: year_end
     attributes:
       label: Updating in a PR
-      description: '[Creating a PR](https://github.com/ShaMan123/gha-form-dropdown-options#creating-a-pr)'
+      description: |
+        [Creating a PR](https://github.com/ShaMan123/gha-form-dropdown-options#creating-a-pr)
       options:
         -
     validations:
@@ -56,7 +58,8 @@ body:
     id: _subs
     attributes:
       label: Recursive
-      description: 'Uses [Dynamic Substitution](https://github.com/ShaMan123/gha-form-dropdown-options#dynamic-substitution)'
+      description: |
+        Uses [Dynamic Substitution](https://github.com/ShaMan123/gha-form-dropdown-options#dynamic-substitution)
       options:
         - 2022-09-27 00:00
         - 2022-09-28 08:00
@@ -70,8 +73,8 @@ body:
     attributes:
       label: Steps To Reproduce
       value: |
-        1. 
-        2. 
+        1.
+        2.
         3.
     validations:
       required: true
