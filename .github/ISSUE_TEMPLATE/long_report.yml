@@ -1319,15 +1319,18 @@ body:
     id: _subs
     attributes:
       label: Recursive
-      description: >
+      description: >-
         Uses [Dynamic
         Substitution](https://github.com/ShaMan123/gha-form-dropdown-options#dynamic-substitution)
+
+        \nUpdated 2025-04-19 06:35:52
       options:
         - 2022-09-27 00:00
         - 2022-09-28 08:00
         - 2022-09-29 12:00
         - 2022-09-30 16:00
         - 2022-10-01 20:00
+        - '2025-04-19 06:35:52'
     validations:
       required: true
   - type: textarea
