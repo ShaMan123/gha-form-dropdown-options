@@ -1,6 +1,6 @@
 {
 	"name": "gha-form-dropdown-options",
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"description": "A github action populating options for an issue forms dropdown",
 	"license": "MIT",
 	"author": "ShaMan123",
