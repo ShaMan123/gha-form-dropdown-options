@@ -177,6 +177,7 @@ jobs:
           dry_run: no-push
       - name: lint
         run: |
+          # https://yamllint.readthedocs.io/en/latest/quickstart.html
           sudo apt-get install yamllint
           yamllint .github/ISSUE_TEMPLATE/bug_report.yml
       - name: Pushed? ${{ steps.branches.outputs.modified || steps.labels.outputs.modified || steps.dates.outputs.modified  }}
@@ -231,6 +232,7 @@ jobs:
           dry_run: no-push
       - name: lint
         run: |
+          # https://yamllint.readthedocs.io/en/latest/quickstart.html
           sudo apt-get install yamllint
           yamllint .github/ISSUE_TEMPLATE/long_report.yml
       - name: Commit & PR

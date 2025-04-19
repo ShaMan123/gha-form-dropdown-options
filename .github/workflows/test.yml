@@ -29,5 +29,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: lint
         run: |
+          # https://yamllint.readthedocs.io/en/latest/quickstart.html
           sudo apt-get install yamllint
           yamllint ./test
