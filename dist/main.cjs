@@ -24437,7 +24437,7 @@ function parseYAML(input) {
 }
 
 function stringifyYAML(data) {
-	return dump(data, { schema });
+	return dump(data, { schema, lineWidth: 80 });
 }
 
 function readYAMLFile(file) {

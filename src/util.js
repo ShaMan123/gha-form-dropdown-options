@@ -16,7 +16,7 @@ export function parseYAML(input) {
 }
 
 export function stringifyYAML(data) {
-	return dump(data, { schema });
+	return dump(data, { schema, lineWidth: 80 });
 }
 
 export function readYAMLFile(file) {
