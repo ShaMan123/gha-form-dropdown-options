@@ -24582,7 +24582,7 @@ function writeYAML({
 # Update this file by editing '${templateId}'.
 #
 `;
-		out = `${HEADER}\n${out}`;
+		out = `${HEADER}${out}`;
 	}
 	!noWrite && fs__default["default"].writeFileSync(form, out);
 	return content;
