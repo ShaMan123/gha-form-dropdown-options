@@ -84,6 +84,14 @@ inputs:
       - no-write
       - no-commit
       - no-push
+  pull_strategy:
+    description: |
+      The git pull strategy to use before pushing changes. Use `ff-only` for fast-forward only (default), or `rebase` to rebase local changes.
+    type: choice
+    default: ff-only
+    options:
+      - ff-only
+      - rebase
 
 # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs#example-defining-outputs-for-a-job
 outputs:
@@ -140,7 +148,11 @@ runs:
           git commit -m "$MSG"
           if [[ ${{ inputs.dry_run != 'no-push' }} == true ]]; then
             echo "Pushing to upstream"
-            git pull --ff-only
+            if [[ "${{ inputs.pull_strategy }}" == "rebase" ]]; then
+              git pull --rebase
+            else
+              git pull --ff-only
+            fi
             git push
             PUSHED=true
           fi
